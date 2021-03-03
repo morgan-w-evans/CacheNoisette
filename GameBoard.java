@@ -9,20 +9,22 @@ public class GameBoard
     private JPanel innerPanel = new JPanel();
     private GridLayout innerLayout = new GridLayout(4, 4);
 
-    private Picture upArrow = new Picture("BigArrow.png", 0);
-    private Picture downArrow = new Picture("BigArrow.png", 180);
-    private Picture leftArrow = new Picture("Arrow.png", 270);
-    private Picture rightArrow = new Picture("Arrow.png", 90);
+    private Picture upArrow = new Picture("icons/BigArrow.png", 0);
+    private Picture downArrow = new Picture("icons/BigArrow.png", 180);
+    private Picture leftArrow = new Picture("icons/Arrow.png", 270);
+    private Picture rightArrow = new Picture("icons/Arrow.png", 90);
 
-    private Picture emptyBoxPicture = new Picture("Empty.png", 0);
-    private Picture holeBoxPicture = new Picture("Hole.png", 0);
-    private JButton emptyBox = new JButton(emptyBoxPicture);
-    private JButton holeBox = new JButton(holeBoxPicture);
+    private Picture emptyBoxPicture = new Picture("icons/Empty.png", 0);
+    private Picture holeBoxPicture = new Picture("icons/Hole.png", 0);
+    private JButton emptyBox[] = new JButton[12];
+    private JButton holeBox[] = new JButton[4];
 
     private JButton upButton = new JButton(upArrow);
     private JButton downButton = new JButton(downArrow);
     private JButton leftButton = new JButton(leftArrow);
     private JButton rightButton = new JButton(rightArrow);
+
+    private ArrowButton arrow;
 
     public GameBoard()
     {
@@ -30,24 +32,32 @@ public class GameBoard
         window.setSize(600, 630);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        for(int i = 0; i<12; i++){
+            emptyBox[i] = new JButton(emptyBoxPicture);
+        }
+
+        for(int j = 0; j < 4; j++){
+            holeBox[j] = new JButton(holeBoxPicture);
+        }
+
         innerPanel.setLayout(innerLayout);
 
-        innerPanel.add(emptyBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(holeBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(holeBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(holeBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(emptyBox);
-        innerPanel.add(holeBox);
+        innerPanel.add(emptyBox[0]);
+        innerPanel.add(emptyBox[1]);
+        innerPanel.add(holeBox[0]);
+        innerPanel.add(emptyBox[2]);
+        innerPanel.add(holeBox[1]);
+        innerPanel.add(emptyBox[3]);
+        innerPanel.add(emptyBox[4]);
+        innerPanel.add(emptyBox[5]);
+        innerPanel.add(emptyBox[6]);
+        innerPanel.add(holeBox[2]);
+        innerPanel.add(emptyBox[7]);
+        innerPanel.add(emptyBox[8]);
+        innerPanel.add(emptyBox[9]);
+        innerPanel.add(emptyBox[10]);
+        innerPanel.add(emptyBox[11]);
+        innerPanel.add(holeBox[3]);
 
         outerPanel.setLayout(null);
 
@@ -85,26 +95,5 @@ public class GameBoard
 
     }
 
-    public void actionPerformned(ActionEvent e)
-    {
-        if(e.getSource()==upButton)
-        {
-            return;
-        }
 
-        if(e.getSource()==downButton)
-        {
-            return;
-        }
-
-        if(e.getSource()==leftButton)
-        {
-            return;
-        }
-
-        if(e.getSource()==rightButton)
-        {
-            return;
-        }
-    }
 }
