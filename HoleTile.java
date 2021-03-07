@@ -3,34 +3,34 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * This class creates a blank tile.
+ * This class creates a tile containing a hole.
  * 
  * @author Morgan Evans
  */
-public class BlankTile
+public class HoleTile
 {
     private Picture pic;
     private JButton button;
 
     /**
-     * Creates an instance of BlankTile by creating a JButton and inserting the tile icon.
+     * Creates an instance of HoleTile by creating a JButton and inserting the hole icon.
      */
-    public BlankTile()
+    public HoleTile()
     {
-        this.pic = new Picture("icons/Empty.png", 0);
+        this.pic = new Picture("icons/Hole.png", 0);
         this.button = new JButton(this.pic);
         this.button.setRolloverEnabled(false);
         this.button.setBorderPainted(false);
-        
     }
 
     /**
      * Retrieves the button created from within this class, so that it can be integrated into another class.
      * 
-     * @return the button created in the instance.
+     * @return the button created in this instance.
      */
     public JButton button()
     {
         return this.button;
     }
+
 }

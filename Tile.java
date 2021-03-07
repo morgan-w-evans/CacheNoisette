@@ -3,20 +3,20 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
-     * This class creates the gameboard, consisiting of blank tiles, with holes inserted in preset locations.
-     * Directional buttons are inserted surrounding the gameboard, to allow the squirrels to be controlled.
+     * This class creates the game board, consisiting of blank tiles, with holes inserted in preset locations.
+     * Directional buttons are inserted surrounding the game board, to allow the squirrels to be controlled.
      * @author Morgan Evans
      */
-public class GameBoard
+public class Tile
 {
-    // Generates the window and layout.
+    
+
     private JFrame window = new JFrame();
     private JPanel outerPanel = new JPanel();
     private JPanel innerPanel = new JPanel();
     private GridLayout innerLayout = new GridLayout(4, 4);
     private JButton cell[][] = new JButton[4][4];
     
-    // Inserting arrow images and creating buttons to display them.
     private Picture upArrow = new Picture("icons/BigArrow.png", 0);
     private Picture downArrow = new Picture("icons/BigArrow.png", 180);
     private Picture leftArrow = new Picture("icons/Arrow.png", 270);
@@ -27,21 +27,16 @@ public class GameBoard
     private JButton leftButton = new JButton(leftArrow);
     private JButton rightButton = new JButton(rightArrow);
 
-    // Instances of the tiles are created in arrarys to construct the gameboard.
     private BlankTile blankTile[] = new BlankTile[16];
     private HoleTile holeTile[] = new HoleTile[4];
 
-    /**
-     * Creates a gameboard window.
-     */
-    public GameBoard()
+    public Tile()
     {
-        // Initialising the window.
         window.setTitle("Cache Noisette!");
         window.setSize(600, 625);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Setting the layout and adding elemets to the gameboard.
+
         innerPanel.setLayout(innerLayout);
 
         for(int i = 0; i < 16; i++)
@@ -85,8 +80,8 @@ public class GameBoard
                 innerPanel.add(cell[m][n]);
             }
         } 
+
         
-        // Creating the outer layout, containing the navigation buttons.
         outerPanel.setLayout(null);
 
         outerPanel.add("North", upButton);
@@ -118,6 +113,7 @@ public class GameBoard
         innerPanel.setSize(400,400);
 
         window.setContentPane(outerPanel);
+
         window.setVisible(true);
 
     }
