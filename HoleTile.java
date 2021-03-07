@@ -26,7 +26,7 @@ public class HoleTile
     /**
      * Retrieves the button created from within this class, so that it can be integrated into another class.
      * 
-     * @return the button created in this instance.
+     * @return the button created in the instance.
      */
     public JButton button()
     {
