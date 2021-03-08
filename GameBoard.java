@@ -4,7 +4,9 @@ import java.awt.event.*;
 
 /**
      * This class creates the gameboard, consisiting of blank tiles, with holes inserted in preset locations.
+     * 
      * Directional buttons are inserted surrounding the gameboard, to allow the squirrels to be controlled.
+     * 
      * @author Morgan Evans
      */
 public class GameBoard
@@ -30,6 +32,9 @@ public class GameBoard
     // Instances of the tiles are created in arrarys to construct the gameboard.
     private BlankTile blankTile[] = new BlankTile[16];
     private HoleTile holeTile[] = new HoleTile[4];
+
+    // Flower icon
+    private Picture flower = new Picture("icons/Flower.png", 0);
 
     /**
      * Creates a gameboard window.
@@ -120,5 +125,34 @@ public class GameBoard
         window.setContentPane(outerPanel);
         window.setVisible(true);
 
+    }
+
+    public void add(Squirrel squirrel, int x, int y, boolean tail)
+    {
+        if(squirrel.getRotation() == 0)
+        {
+            this.cell[y][x].setIcon(squirrel.add("nut"));
+            this.cell[y+1][x].setIcon(squirrel.add("tail"));
+        }
+        if(squirrel.getRotation() == 90)
+        {
+            this.cell[y][x].setIcon(squirrel.add("nut"));
+            this.cell[y][x-1].setIcon(squirrel.add("tail"));
+        }
+        if(squirrel.getRotation() == 180)
+        {
+            this.cell[y][x].setIcon(squirrel.add("nut"));
+            this.cell[y-1][x].setIcon(squirrel.add("tail"));
+        }
+        if(squirrel.getRotation() == 270)
+        {
+            this.cell[y][x].setIcon(squirrel.add("nut"));
+            this.cell[y][x+1].setIcon(squirrel.add("tail"));
+        }
+    }
+
+    public void addFlower(int x, int y)
+    {
+        this.cell[y][x].setIcon(this.flower);
     }
 }

@@ -21,7 +21,6 @@ public class BlankTile
         this.button = new JButton(this.pic);
         this.button.setRolloverEnabled(false);
         this.button.setBorderPainted(false);
-        
     }
 
     /**
