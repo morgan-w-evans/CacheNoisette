@@ -9,7 +9,7 @@ import java.awt.event.*;
      * 
      * @author Morgan Evans
      */
-public class GameBoard
+public class GameBoard implements ActionListener
 {
     // Generates the window and layout.
     private JFrame window = new JFrame();
@@ -35,6 +35,11 @@ public class GameBoard
 
     // Flower icon
     private Picture flower = new Picture("icons/Flower.png", 0);
+
+    // Storing squirrels
+    private int xCoord[] = new int[3];
+    private int yCoord[] = new int[3];
+    private Icon copy[] = new Icon[3];
 
     /**
      * Creates a gameboard window.
@@ -99,6 +104,7 @@ public class GameBoard
         upButton.setSize(600,100);
         upButton.setRolloverEnabled(false);
         upButton.setBorderPainted(false);
+        upButton.addActionListener(this);
 
         outerPanel.add("South", downButton);
         downButton.setLocation(0,500);
@@ -127,32 +133,97 @@ public class GameBoard
 
     }
 
-    public void add(Squirrel squirrel, int x, int y, boolean tail)
+    public void add(Squirrel squirrel, int x, int y, boolean flowers)
     {
+        int x2 = x, y2 = y;
+        
+
         if(squirrel.getRotation() == 0)
         {
-            this.cell[y][x].setIcon(squirrel.add("nut"));
-            this.cell[y+1][x].setIcon(squirrel.add("tail"));
+            y2 = y + 1;
         }
         if(squirrel.getRotation() == 90)
         {
-            this.cell[y][x].setIcon(squirrel.add("nut"));
-            this.cell[y][x-1].setIcon(squirrel.add("tail"));
+            x2 = x - 1;
         }
         if(squirrel.getRotation() == 180)
         {
-            this.cell[y][x].setIcon(squirrel.add("nut"));
-            this.cell[y-1][x].setIcon(squirrel.add("tail"));
+            y2 = y - 1;
         }
         if(squirrel.getRotation() == 270)
         {
-            this.cell[y][x].setIcon(squirrel.add("nut"));
-            this.cell[y][x+1].setIcon(squirrel.add("tail"));
+            x2 = x + 1;
         }
+        
+        this.copy[0] = this.cell[y][x].getIcon();
+        this.cell[y][x].setIcon(squirrel.add("nut"));
+        this.cell[y][x].addActionListener(this);
+
+        this.copy[1] = this.cell[y2][x2].getIcon();
+        this.cell[y2][x2].setIcon(squirrel.add("tail"));
+        this.cell[y2][x2].addActionListener(this);
+    }
+
+    public void remove(Squirrel squirrel, int x, int y, boolean flowers)
+    {
+        int x2 = x, y2 = y, x3 = 0, y3 = 0;
+
+        if(squirrel.getRotation() == 0)
+        {
+            y2 = y + 1;
+        }
+        if(squirrel.getRotation() == 90)
+        {
+            x2 = x - 1;
+        }
+        if(squirrel.getRotation() == 180)
+        {
+            y2 = y - 1;
+        }
+        if(squirrel.getRotation() == 270)
+        {
+            x2 = x + 1;
+        }
+        
+        this.cell[y][x].setIcon(this.copy[0]);
+        this.cell[y][x].removeActionListener(this);
+
+        this.cell[y2][x2].setIcon(this.copy[1]);
+        this.cell[y2][x2].removeActionListener(this);
     }
 
     public void addFlower(int x, int y)
     {
         this.cell[y][x].setIcon(this.flower);
+    }
+
+    public void actionPerformed(ActionEvent e)
+    {
+        // Squirrel Selection
+        e.getSource();
+        
+        // Navigation Button Event
+        if(e.getSource() == upButton)
+        {
+            
+        }
+        if(e.getSource() == downButton)
+        {
+
+        }
+        if(e.getSource() == leftButton)
+        {
+
+        }
+        if(e.getSource() == rightButton)
+        {
+
+        }
+    }
+
+    public void move(Squirrel squirrel, int xCurrent, int yCurrent, int xNew, int yNew, boolean flowers)
+    {
+        this.remove(squirrel, xCurrent, yCurrent, flowers);
+        this.add(squirrel, xNew, yNew, flowers);
     }
 }

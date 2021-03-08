@@ -50,19 +50,6 @@ public class Squirrel
         this.squirrelPicture[1] = new Picture("icons/"+filePath+"Squirrel1.png", this.rotation);
         this.squirrelPicture[2] = new Picture("icons/"+filePath+"Squirrel2.png", this.rotation);
         this.squirrelPicture[3] = new Picture("icons/SquirrelFlower.png", 0);
-        
-        /** Initialising JPanel
-        this.panel = new JPanel();
-
-        // Initialsising JButtons
-        for(int i = 0; i < 4; i++)
-        {
-            this.squirrel[i] = new JButton(squirrelPicture[i]);
-            this.panel.add(this.squirrel[i]);
-            this.squirrel[i].setRolloverEnabled(false);
-            this.squirrel[i].setBorderPainted(false);
-        }
-        */
     }
 
     public Picture add(String choice)
