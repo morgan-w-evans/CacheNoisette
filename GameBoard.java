@@ -256,9 +256,9 @@ public class GameBoard implements ActionListener
                 {
                     if(e.getSource() == cell[n][m])
                     {
-                        this.xCoord = n;
-                        this.yCoord = m;
-                        selectedSquirrel = savedSquirrel[n][m];
+                        this.xCoord = m;
+                        this.yCoord = n;
+                        selectedSquirrel = savedSquirrel[m][n];
                     }
                 }
             }
