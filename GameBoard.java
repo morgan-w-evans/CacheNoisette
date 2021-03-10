@@ -112,33 +112,10 @@ public class GameBoard implements ActionListener
         // Creating the outer layout, containing the navigation buttons.
         outerPanel.setLayout(null);
 
-        outerPanel.add("North", upButton);
-        upButton.setLocation(0,0);
-        upButton.setSize(600,100);
-        upButton.setRolloverEnabled(false);
-        upButton.setBorderPainted(false);
-        upButton.addActionListener(this);
-
-        outerPanel.add("South", downButton);
-        downButton.setLocation(0,500);
-        downButton.setSize(600,100);
-        downButton.setRolloverEnabled(false);
-        downButton.setBorderPainted(false);
-        downButton.addActionListener(this);
-
-        outerPanel.add ("East", rightButton);
-        rightButton.setLocation(500,100);
-        rightButton.setSize(100,400);
-        rightButton.setRolloverEnabled(false);
-        rightButton.setBorderPainted(false);
-        rightButton.addActionListener(this);
-
-        outerPanel.add("West", leftButton);
-        leftButton.setLocation(0,100);
-        leftButton.setSize(100,400);
-        leftButton.setRolloverEnabled(false);
-        leftButton.setBorderPainted(false);
-        leftButton.addActionListener(this);
+        arrowButton(upButton, 0, 0, 600, 100);
+        arrowButton(downButton, 0, 500, 600, 100);
+        arrowButton(rightButton, 500, 100, 100, 400);
+        arrowButton(leftButton, 0, 100, 100, 400);
 
         outerPanel.add("Center", innerPanel);
         innerPanel.setLocation(100,100);
@@ -163,6 +140,25 @@ public class GameBoard implements ActionListener
         this.holeEmpty[0][1] = 1;
         this.holeEmpty[1][2] = 1;
         this.holeEmpty[3][3] = 1;
+    }
+
+    /**
+     * Adds arrow buttons to JPanel and provides formatting.
+     * 
+     * @param button button to add to JPanel.
+     * @param posX x position of button in JPanel (pixels).
+     * @param posY y position of button in JPanel (pixels).
+     * @param sizX width of button (pixels).
+     * @param sizY height of button (pixels).
+     */
+    private void arrowButton(JButton button, int posX, int posY, int sizX, int sizY)
+    {
+        outerPanel.add(button);
+        button.setLocation(posX,posY);
+        button.setSize(sizX,sizY);
+        button.setRolloverEnabled(false);
+        button.setBorderPainted(false);
+        button.addActionListener(this);
     }
 
     /**
@@ -342,6 +338,14 @@ public class GameBoard implements ActionListener
         }
     }
 
+    /**
+     * Calculates the coordinates of the squirrel's tail, based on the rotation of the squirrel.
+     * 
+     * @param squirrel squirrel in question.
+     * @param x x position of squirrel's head.
+     * @param y y position of squirrel's head.
+     * @return returns the coordinates of the squirrel's tail as an array {x,y}.
+     */
     public int[] pieceLocation(Squirrel squirrel, int x, int y)
     {
         int x2 = x, y2 = y;
@@ -366,6 +370,15 @@ public class GameBoard implements ActionListener
         return new int[] {x2, y2};
     }
 
+    /**
+     * Checks to ensure that the new location of the squirrel remains on the gameboard.
+     * 
+     * @param x x coordinate of squirrel's head.
+     * @param y y coordinate of squirrel's head.
+     * @param x2 x coordinate of squirrel's tail.
+     * @param y2 y coordinate of squirrel's tail.
+     * @return true if squirrel is within the boundary.
+     */
     public boolean inBoundary(int x, int y, int x2, int y2)
     {
         boolean inBoundary = true;
@@ -378,6 +391,11 @@ public class GameBoard implements ActionListener
         return inBoundary;
     }
 
+    /**
+     * Retrieves the current state of the levelComplete boolean.
+     * 
+     * @return true if level has been completed.
+     */
     public boolean levelComplete()
     {
         return this.levelComplete;

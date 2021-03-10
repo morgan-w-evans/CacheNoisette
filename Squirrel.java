@@ -82,12 +82,20 @@ public class Squirrel
         }
     }
 
+    /**
+     * Updates squirrel's head to icon without nut.
+     */
     public void nutDrop()
     {
         this.head = this.squirrelPicture[1];
         nutDropped = true;
     }
 
+    /**
+     * Returns the state of the nut.
+     * 
+     * @return true if nut has been dropped.
+     */
     public boolean nutDropped()
     {
         return this.nutDropped;
