@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Objects;
 
 /**
      * This class creates the gameboard, consisiting of blank tiles, with holes inserted in preset locations.
@@ -38,18 +39,20 @@ public class GameBoard implements ActionListener
     private Picture flower = new Picture("icons/Flower.png", 0);
 
     // Storing squirrels
-    private int xCoord = 0;
-    private int yCoord = 0;
+    private int xCoord;
+    private int yCoord;
     private Icon savedIconHead[][] = new Icon[4][4];
     private Icon savedIconTail[][] = new Icon[4][4];
     private Icon savedIconFlowers[][] = new Icon[4][4];
     private Squirrel savedSquirrel[][] = new Squirrel[4][4];
-    private Squirrel selectedSquirrel = new Squirrel("red", 0);
+    private Squirrel selectedSquirrel;
     private int squirrelCount = 0;
 
     // Nut drop
     private Picture holeNut = new Picture("icons/HoleNut.png", 0);
     private int holeEmpty[][] = new int[4][4];
+    private int nutDropCount = 0;
+    private boolean levelComplete = false;
 
     /**
      * Creates a gameboard window.
@@ -187,7 +190,7 @@ public class GameBoard implements ActionListener
 
         savedIconTail[y2][x2] = this.cell[y2][x2].getIcon();
         this.cell[y2][x2].setIcon(squirrel.add("tail"));
-        this.cell[y2][x2].addActionListener(this);
+        //this.cell[y2][x2].addActionListener(this);
 
         savedSquirrel[x][y] = squirrel;
 
@@ -224,7 +227,7 @@ public class GameBoard implements ActionListener
         this.cell[y][x].removeActionListener(this);
 
         this.cell[y2][x2].setIcon(savedIconTail[y2][x2]);
-        this.cell[y2][x2].removeActionListener(this);
+        //this.cell[y2][x2].removeActionListener(this);
 
         savedSquirrel[x][y] = null;
 
@@ -253,17 +256,22 @@ public class GameBoard implements ActionListener
     {
         // Squirrel Selection
         for(int m = 0; m < 4; m++)
+        {
+            for(int n = 0; n < 4; n++)
             {
-                for(int n = 0; n < 4; n++)
+                if(e.getSource() == cell[n][m])
                 {
-                    if(e.getSource() == cell[n][m])
-                    {
-                        this.xCoord = m;
-                        this.yCoord = n;
-                        selectedSquirrel = savedSquirrel[m][n];
-                    }
+                    this.xCoord = m;
+                    this.yCoord = n;
+                    selectedSquirrel = savedSquirrel[m][n];
                 }
             }
+        }
+        
+        if(Objects.isNull(this.xCoord) | Objects.isNull(this.yCoord) | Objects.isNull(this.selectedSquirrel))
+        {
+            return;
+        }
         
         // Navigation Button Event
         if(e.getSource() == upButton)
@@ -296,8 +304,13 @@ public class GameBoard implements ActionListener
      */
     public void move(Squirrel squirrel, int xCurrent, int yCurrent, int xNew, int yNew, boolean flowers)
     {
-        this.remove(squirrel, xCurrent, yCurrent, flowers);
         int coord[] = pieceLocation(squirrel, xNew, yNew);
+        
+        if(this.inBoundary(xNew, yNew, coord[0], coord[1])==false){
+            return;
+        }
+        
+        this.remove(squirrel, xCurrent, yCurrent, flowers);
 
         if(this.tileAccess[xNew][yNew] == 0 | this.tileAccess[coord[0]][coord[1]] == 0)
         {
@@ -315,11 +328,17 @@ public class GameBoard implements ActionListener
                 squirrel.nutDrop();
                 this.holeEmpty[xNew][yNew] = 0;
                 this.cell[yNew][xNew].setIcon(holeNut);
+                this.nutDropCount++;
             }
 
             //this.remove(squirrel, xCurrent, yCurrent, flowers);
-            
             this.add(squirrel, xNew, yNew, flowers);
+
+            if(nutDropCount == squirrelCount)
+            {
+                levelComplete = true;
+                System.out.println("Level Complete");
+            }
         }
     }
 
@@ -345,5 +364,22 @@ public class GameBoard implements ActionListener
         }
 
         return new int[] {x2, y2};
+    }
+
+    public boolean inBoundary(int x, int y, int x2, int y2)
+    {
+        boolean inBoundary = true;
+        
+        if(x > 3 | x < 0 | y > 3 | y < 0 | x2 > 3 | x2 < 0 | y2 > 3 | y2 < 0)
+        {
+            inBoundary = false;
+        }
+        
+        return inBoundary;
+    }
+
+    public boolean levelComplete()
+    {
+        return this.levelComplete;
     }
 }
