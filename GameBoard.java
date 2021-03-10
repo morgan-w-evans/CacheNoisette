@@ -32,6 +32,7 @@ public class GameBoard implements ActionListener
     // Instances of the tiles are created in arrarys to construct the gameboard.
     private BlankTile blankTile[] = new BlankTile[16];
     private HoleTile holeTile[] = new HoleTile[4];
+    private int tileAccess[][] = new int[4][4];
 
     // Flower icon
     private Picture flower = new Picture("icons/Flower.png", 0);
@@ -44,6 +45,7 @@ public class GameBoard implements ActionListener
     private Icon savedIconFlowers[][] = new Icon[4][4];
     private Squirrel savedSquirrel[][] = new Squirrel[4][4];
     private Squirrel selectedSquirrel = new Squirrel("red", 0);
+    private int squirrelCount = 0;
 
     /**
      * Creates a gameboard window.
@@ -139,13 +141,15 @@ public class GameBoard implements ActionListener
         window.setVisible(true);
 
         // Initialising array to store squirrel in
+        // Allowing access to all tiles
         for(int m = 0; m < 4; m++)
+        {
+            for(int n = 0; n < 4; n++)
             {
-                for(int n = 0; n < 4; n++)
-                {
-                    this.savedSquirrel[n][m] = new Squirrel("red", 0);
-                }
+                this.savedSquirrel[n][m] = new Squirrel("red", 0);
+                this.tileAccess[n][m] = 1;
             }
+        }
 
     }
 
@@ -160,24 +164,12 @@ public class GameBoard implements ActionListener
     public void add(Squirrel squirrel, int x, int y, boolean flowers)
     {
         // Determining location of the squirrel pieces
-        int x2 = x, y2 = y;
+        int secondCoord[] = pieceLocation(squirrel, x, y);
+        int x2 = secondCoord[0], y2 = secondCoord[1];
 
-        if(squirrel.getRotation() == 0)
-        {
-            y2 = y + 1;
-        }
-        if(squirrel.getRotation() == 90)
-        {
-            x2 = x - 1;
-        }
-        if(squirrel.getRotation() == 180)
-        {
-            y2 = y - 1;
-        }
-        if(squirrel.getRotation() == 270)
-        {
-            x2 = x + 1;
-        }
+        // Update tile access
+        this.tileAccess[x][y] = 0;
+        this.tileAccess[x2][y2] = 0;
         
         // Adding squirrel by replacing icons. Stores icons and squirrels in arrays for retrieval
         savedIconHead[y][x] = this.cell[y][x].getIcon();
@@ -189,6 +181,15 @@ public class GameBoard implements ActionListener
         this.cell[y2][x2].addActionListener(this);
 
         savedSquirrel[x][y] = squirrel;
+
+        // Squirrel counter
+        this.squirrelCount++;
+
+        if(this.squirrelCount >= 5)
+        {
+            this.remove(squirrel, x, y, flowers);
+            System.out.println("Squirrel removed. Maximum of 4 on the board at once.");
+        }
     }
 
     /**
@@ -202,24 +203,12 @@ public class GameBoard implements ActionListener
     public void remove(Squirrel squirrel, int x, int y, boolean flowers)
     {
         // Determining the location of the squirrel pieces
-        int x2 = x, y2 = y;
-
-        if(squirrel.getRotation() == 0)
-        {
-            y2 = y + 1;
-        }
-        if(squirrel.getRotation() == 90)
-        {
-            x2 = x - 1;
-        }
-        if(squirrel.getRotation() == 180)
-        {
-            y2 = y - 1;
-        }
-        if(squirrel.getRotation() == 270)
-        {
-            x2 = x + 1;
-        }
+        int secondCoord[] = pieceLocation(squirrel, x, y);
+        int x2 = secondCoord[0], y2 = secondCoord[1];
+        
+        // Make tile available again
+        this.tileAccess[x][y] = 1;
+        this.tileAccess[x2][y2] = 1;
         
         // Removing squirrel by replacing icons
         this.cell[y][x].setIcon(savedIconHead[y][x]);
@@ -229,6 +218,9 @@ public class GameBoard implements ActionListener
         this.cell[y2][x2].removeActionListener(this);
 
         savedSquirrel[x][y] = null;
+
+        // Squirrel counter
+        this.squirrelCount--;
     }
 
     /**
@@ -240,6 +232,7 @@ public class GameBoard implements ActionListener
     public void addFlower(int x, int y)
     {
         this.cell[y][x].setIcon(this.flower);
+        this.tileAccess[x][y] = 0;
     }
 
     /**
@@ -280,6 +273,36 @@ public class GameBoard implements ActionListener
         {
             this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord+1, this.yCoord, false);
         }
+
+        // Applying nut drop rule
+        if(this.xCoord == 0)
+        {
+            if(this.yCoord == 2)
+            {
+                this.nutDrop(this.selectedSquirrel, this.xCoord, this.yCoord, false);
+            }
+        }
+        if(this.xCoord == 1)
+        {
+            if(this.yCoord == 0)
+            {
+                this.nutDrop(this.selectedSquirrel, this.xCoord, this.yCoord, false);
+            }
+        }
+        if(this.xCoord == 2)
+        {
+            if(this.yCoord == 1)
+            {
+                this.nutDrop(this.selectedSquirrel, this.xCoord, this.yCoord, false);
+            }
+        }
+        if(this.xCoord == 3)
+        {
+            if(this.yCoord == 3)
+            {
+                this.nutDrop(this.selectedSquirrel, this.xCoord, this.yCoord, false);
+            }
+        }
     }
 
     /**
@@ -295,8 +318,46 @@ public class GameBoard implements ActionListener
     public void move(Squirrel squirrel, int xCurrent, int yCurrent, int xNew, int yNew, boolean flowers)
     {
         this.remove(squirrel, xCurrent, yCurrent, flowers);
-        this.xCoord = xNew;
-        this.yCoord = yNew;
-        this.add(squirrel, xNew, yNew, flowers);
+        int coord[] = pieceLocation(squirrel, xNew, yNew);
+
+        if(this.tileAccess[xNew][yNew] == 0 | this.tileAccess[coord[0]][coord[1]] == 0)
+        {
+            this.add(squirrel, xCurrent, yCurrent, flowers);
+        }
+        else{
+            this.xCoord = xNew;
+            this.yCoord = yNew;
+            this.add(squirrel, xNew, yNew, flowers);
+        }
+    }
+
+    public void nutDrop(Squirrel squirrel, int x, int y, boolean flowers)
+    {
+        this.savedIconHead[y][x] = new ImageIcon("icons/HoleNut.png");
+
+    }
+
+    public int[] pieceLocation(Squirrel squirrel, int x, int y)
+    {
+        int x2 = x, y2 = y;
+
+        if(squirrel.getRotation() == 0)
+        {
+            y2 = y + 1;
+        }
+        if(squirrel.getRotation() == 90)
+        {
+            x2 = x - 1;
+        }
+        if(squirrel.getRotation() == 180)
+        {
+            y2 = y - 1;
+        }
+        if(squirrel.getRotation() == 270)
+        {
+            x2 = x + 1;
+        }
+
+        return new int[] {x2, y2};
     }
 }
