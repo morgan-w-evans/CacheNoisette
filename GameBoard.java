@@ -47,6 +47,10 @@ public class GameBoard implements ActionListener
     private Squirrel selectedSquirrel = new Squirrel("red", 0);
     private int squirrelCount = 0;
 
+    // Nut drop
+    private Picture holeNut = new Picture("icons/HoleNut.png", 0);
+    private int holeEmpty[][] = new int[4][4];
+
     /**
      * Creates a gameboard window.
      */
@@ -151,6 +155,11 @@ public class GameBoard implements ActionListener
             }
         }
 
+        // Initialsing hole identifier
+        this.holeEmpty[2][0] = 1;
+        this.holeEmpty[0][1] = 1;
+        this.holeEmpty[1][2] = 1;
+        this.holeEmpty[3][3] = 1;
     }
 
     /**
@@ -173,7 +182,7 @@ public class GameBoard implements ActionListener
         
         // Adding squirrel by replacing icons. Stores icons and squirrels in arrays for retrieval
         savedIconHead[y][x] = this.cell[y][x].getIcon();
-        this.cell[y][x].setIcon(squirrel.add("nut"));
+        this.cell[y][x].setIcon(squirrel.add("head"));
         this.cell[y][x].addActionListener(this);
 
         savedIconTail[y2][x2] = this.cell[y2][x2].getIcon();
@@ -273,36 +282,6 @@ public class GameBoard implements ActionListener
         {
             this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord+1, this.yCoord, false);
         }
-
-        // Applying nut drop rule
-        if(this.xCoord == 0)
-        {
-            if(this.yCoord == 2)
-            {
-                this.nutDrop(this.selectedSquirrel, this.xCoord, this.yCoord, false);
-            }
-        }
-        if(this.xCoord == 1)
-        {
-            if(this.yCoord == 0)
-            {
-                this.nutDrop(this.selectedSquirrel, this.xCoord, this.yCoord, false);
-            }
-        }
-        if(this.xCoord == 2)
-        {
-            if(this.yCoord == 1)
-            {
-                this.nutDrop(this.selectedSquirrel, this.xCoord, this.yCoord, false);
-            }
-        }
-        if(this.xCoord == 3)
-        {
-            if(this.yCoord == 3)
-            {
-                this.nutDrop(this.selectedSquirrel, this.xCoord, this.yCoord, false);
-            }
-        }
     }
 
     /**
@@ -325,16 +304,23 @@ public class GameBoard implements ActionListener
             this.add(squirrel, xCurrent, yCurrent, flowers);
         }
         else{
+            //this.add(squirrel, xCurrent, yCurrent, flowers);
+
             this.xCoord = xNew;
             this.yCoord = yNew;
+
+            // Applying nut drop rule
+            if(xNew == 2 & yNew == 0 & holeEmpty[2][0] == 1 & squirrel.nutDropped()==false| xNew == 0 & yNew == 1 & holeEmpty[0][1] == 1 & squirrel.nutDropped()==false| xNew == 1 & yNew == 2 & holeEmpty[1][2] == 1 & squirrel.nutDropped()==false| xNew == 3 & yNew == 3 & holeEmpty[3][3] == 1 & squirrel.nutDropped()==false)
+            {
+                squirrel.nutDrop();
+                this.holeEmpty[xNew][yNew] = 0;
+                this.cell[yNew][xNew].setIcon(holeNut);
+            }
+
+            //this.remove(squirrel, xCurrent, yCurrent, flowers);
+            
             this.add(squirrel, xNew, yNew, flowers);
         }
-    }
-
-    public void nutDrop(Squirrel squirrel, int x, int y, boolean flowers)
-    {
-        this.savedIconHead[y][x] = new ImageIcon("icons/HoleNut.png");
-
     }
 
     public int[] pieceLocation(Squirrel squirrel, int x, int y)

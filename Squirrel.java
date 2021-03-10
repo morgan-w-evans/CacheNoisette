@@ -11,6 +11,8 @@ public class Squirrel
 {
     private int rotation;
     private Picture squirrelPicture[] = new Picture[4];
+    private Picture head, tail;
+    private boolean nutDropped = false;
     //private JButton squirrel[] = new JButton[4];
 
     int elements = 2;
@@ -50,6 +52,9 @@ public class Squirrel
         this.squirrelPicture[1] = new Picture("icons/"+filePath+"Squirrel1.png", this.rotation);
         this.squirrelPicture[2] = new Picture("icons/"+filePath+"Squirrel2.png", this.rotation);
         this.squirrelPicture[3] = new Picture("icons/SquirrelFlower.png", 0);
+
+        this.head = this.squirrelPicture[0];
+        this.tail = this.squirrelPicture[2];
     }
 
     /**
@@ -62,24 +67,30 @@ public class Squirrel
     {
         int n = 0;
 
-        if(choice == "nut")
-        {
-            n = 0;
-        }
         if(choice == "head")
         {
-            n = 1;
+            return this.head;
         }
-        if(choice == "tail")
+        else if(choice == "tail")
         {
-            n = 2;
+            return this.tail;
         }
-        if(choice == "flowers")
-        {
-            n = 3;
+        else{
+            
+            System.out.println("Incorrect squirrel part");
+            return null;
         }
-        
-        return this.squirrelPicture[n];
+    }
+
+    public void nutDrop()
+    {
+        this.head = this.squirrelPicture[1];
+        nutDropped = true;
+    }
+
+    public boolean nutDropped()
+    {
+        return this.nutDropped;
     }
 
     /**
