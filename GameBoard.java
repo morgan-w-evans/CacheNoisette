@@ -14,6 +14,10 @@ public class GameBoard implements ActionListener
 {
     // Generates the window and layout.
     private JFrame window = new JFrame();
+    private JPanel windowPanel = new JPanel();
+    private GridLayout windowLayout = new GridLayout(2, 1);
+    private JPanel gui = new JPanel();
+    private GUI gui2 = new GUI();
     private JPanel outerPanel = new JPanel();
     private JPanel innerPanel = new JPanel();
     private GridLayout innerLayout = new GridLayout(4, 4);
@@ -60,8 +64,8 @@ public class GameBoard implements ActionListener
     public GameBoard()
     {
         // Initialising the window.
-        window.setTitle("Cache Noisette!");
-        window.setSize(600, 625);
+        window.setTitle("Cache Noisettes!");
+        window.setSize(1200, 625);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Setting the layout and adding elemets to the gameboard.
@@ -117,11 +121,22 @@ public class GameBoard implements ActionListener
         arrowButton(rightButton, 500, 100, 100, 400);
         arrowButton(leftButton, 0, 100, 100, 400);
 
-        outerPanel.add("Center", innerPanel);
+        outerPanel.add(innerPanel);
         innerPanel.setLocation(100,100);
         innerPanel.setSize(400,400);
 
-        window.setContentPane(outerPanel);
+        gui = gui2.fetch();
+        windowPanel.setLayout(null);
+        windowPanel.add(gui);
+        gui.setLocation(0, 0);
+        gui.setSize(600,635);
+
+        window.setVisible(true);
+        windowPanel.add(outerPanel);
+        outerPanel.setLocation(600, 0);
+        outerPanel.setSize(600,635);
+
+        window.setContentPane(windowPanel);
         window.setVisible(true);
 
         // Initialising array to store squirrel in
@@ -140,6 +155,14 @@ public class GameBoard implements ActionListener
         this.holeEmpty[0][1] = 1;
         this.holeEmpty[1][2] = 1;
         this.holeEmpty[3][3] = 1;
+    }
+
+    public void addGUI(GUI u)
+    {
+        this.gui = u.fetch();
+        
+        
+        
     }
 
     /**
@@ -167,13 +190,12 @@ public class GameBoard implements ActionListener
      * @param squirrel squirrel to add.
      * @param x x-coordinate of the head. (0,0) to (3,3)
      * @param y y-coordinate of the head. (0,0) to (3,3)
-     * @param flowers true if the squirrel contains additional flower piece.
      */
-    public void add(Squirrel squirrel, int x, int y, boolean flowers)
+    public void add(Squirrel squirrel, int x, int y)
     {
         // Determining location of the squirrel pieces
         int secondCoord[] = pieceLocation(squirrel, x, y);
-        int x2 = secondCoord[0], y2 = secondCoord[1];
+        int x2 = secondCoord[0], y2 = secondCoord[1], x3 = secondCoord[2], y3 = secondCoord[3];
 
         // Update tile access
         this.tileAccess[x][y] = 0;
@@ -186,7 +208,14 @@ public class GameBoard implements ActionListener
 
         savedIconTail[y2][x2] = this.cell[y2][x2].getIcon();
         this.cell[y2][x2].setIcon(squirrel.add("tail"));
-        //this.cell[y2][x2].addActionListener(this);
+        
+        // Adding flower piece
+        if(squirrel.squirrelFlowers())
+        {
+            this.tileAccess[x3][y3] = 0;
+            savedIconFlowers[y3][x3] = this.cell[y3][x3].getIcon();
+            this.cell[y3][x3].setIcon(squirrel.add("flowers"));
+        }
 
         savedSquirrel[x][y] = squirrel;
 
@@ -195,7 +224,7 @@ public class GameBoard implements ActionListener
 
         if(this.squirrelCount >= 5)
         {
-            this.remove(squirrel, x, y, flowers);
+            this.remove(squirrel, x, y);
             System.out.println("Squirrel removed. Maximum of 4 on the board at once.");
         }
     }
@@ -206,13 +235,12 @@ public class GameBoard implements ActionListener
      * @param squirrel squirrel to remove.
      * @param x x-coordinate of the head. (0,0) to (3,3)
      * @param y y-coordinate of the head. (0,0) to (3,3)
-     * @param flowers true if the squirrel contains additional flower piece.
      */
-    public void remove(Squirrel squirrel, int x, int y, boolean flowers)
+    public void remove(Squirrel squirrel, int x, int y)
     {
         // Determining the location of the squirrel pieces
         int secondCoord[] = pieceLocation(squirrel, x, y);
-        int x2 = secondCoord[0], y2 = secondCoord[1];
+        int x2 = secondCoord[0], y2 = secondCoord[1], x3 = secondCoord[2], y3 = secondCoord[3];
         
         // Make tile available again
         this.tileAccess[x][y] = 1;
@@ -223,7 +251,13 @@ public class GameBoard implements ActionListener
         this.cell[y][x].removeActionListener(this);
 
         this.cell[y2][x2].setIcon(savedIconTail[y2][x2]);
-        //this.cell[y2][x2].removeActionListener(this);
+        
+        // Removing flower piece
+        if(squirrel.squirrelFlowers())
+        {
+            this.tileAccess[x3][y3] = 1;
+            this.cell[y3][x3].setIcon(savedIconFlowers[y3][x3]);
+        }
 
         savedSquirrel[x][y] = null;
 
@@ -272,19 +306,19 @@ public class GameBoard implements ActionListener
         // Navigation Button Event
         if(e.getSource() == upButton)
         {
-            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord, this.yCoord-1, false);
+            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord, this.yCoord-1);
         }
         if(e.getSource() == downButton)
         {
-            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord, this.yCoord+1, false);
+            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord, this.yCoord+1);
         }
         if(e.getSource() == leftButton)
         {
-            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord-1, this.yCoord, false);
+            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord-1, this.yCoord);
         }
         if(e.getSource() == rightButton)
         {
-            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord+1, this.yCoord, false);
+            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord+1, this.yCoord);
         }
     }
 
@@ -296,21 +330,20 @@ public class GameBoard implements ActionListener
      * @param yCurrent current y-position of the squirrel.
      * @param xNew new x-position to move squirrel to.
      * @param yNew new y-position to move squirrel to.
-     * @param flowers true if squirrel contains additional flower piece.
      */
-    public void move(Squirrel squirrel, int xCurrent, int yCurrent, int xNew, int yNew, boolean flowers)
+    public void move(Squirrel squirrel, int xCurrent, int yCurrent, int xNew, int yNew)
     {
         int coord[] = pieceLocation(squirrel, xNew, yNew);
         
-        if(this.inBoundary(xNew, yNew, coord[0], coord[1])==false){
+        if(this.inBoundary(xNew, yNew, coord[0], coord[1], coord[2], coord[3])==false){
             return;
         }
         
-        this.remove(squirrel, xCurrent, yCurrent, flowers);
+        this.remove(squirrel, xCurrent, yCurrent);
 
-        if(this.tileAccess[xNew][yNew] == 0 | this.tileAccess[coord[0]][coord[1]] == 0)
+        if(this.tileAccess[xNew][yNew] == 0 | this.tileAccess[coord[0]][coord[1]] == 0 | this.tileAccess[coord[2]][coord[3]] == 0)
         {
-            this.add(squirrel, xCurrent, yCurrent, flowers);
+            this.add(squirrel, xCurrent, yCurrent);
         }
         else{
             //this.add(squirrel, xCurrent, yCurrent, flowers);
@@ -327,8 +360,7 @@ public class GameBoard implements ActionListener
                 this.nutDropCount++;
             }
 
-            //this.remove(squirrel, xCurrent, yCurrent, flowers);
-            this.add(squirrel, xNew, yNew, flowers);
+            this.add(squirrel, xNew, yNew);
 
             if(nutDropCount == squirrelCount)
             {
@@ -339,35 +371,75 @@ public class GameBoard implements ActionListener
     }
 
     /**
-     * Calculates the coordinates of the squirrel's tail, based on the rotation of the squirrel.
+     * Calculates the coordinates of the squirrel's tail and flowers, based on the rotation of the squirrel.
      * 
      * @param squirrel squirrel in question.
      * @param x x position of squirrel's head.
      * @param y y position of squirrel's head.
-     * @return returns the coordinates of the squirrel's tail as an array {x,y}.
+     * @return returns the coordinates of the squirrel's tail and flowers as an array {xTail, yTail, xFlowers, yFlowers}.
      */
     public int[] pieceLocation(Squirrel squirrel, int x, int y)
     {
-        int x2 = x, y2 = y;
+        int x2 = x, y2 = y, x3 = x, y3 = y;
 
         if(squirrel.getRotation() == 0)
         {
             y2 = y + 1;
+
+            if(squirrel.squirrelFlowers() & squirrel.type() == "Brown")
+            {
+                x3 = x + 1;
+            }
+            if(squirrel.squirrelFlowers() & squirrel.type() == "Black")
+            {
+                x3 = x + 1;
+                y3 = y - 1;
+            }
         }
         if(squirrel.getRotation() == 90)
         {
             x2 = x - 1;
+
+            if(squirrel.squirrelFlowers() & squirrel.type() == "Brown")
+            {
+                y3 = y - 1;
+            }
+            if(squirrel.squirrelFlowers() & squirrel.type() == "Black")
+            {
+                x3 = x - 1;
+                y3 = y + 1;
+            }
         }
         if(squirrel.getRotation() == 180)
         {
             y2 = y - 1;
+
+            if(squirrel.squirrelFlowers() & squirrel.type() == "Brown")
+            {
+                y3 = x - 1;
+            }
+            if(squirrel.squirrelFlowers() & squirrel.type() == "Black")
+            {
+                x3 = x - 1;
+                y3 = y - 1;
+            }
         }
         if(squirrel.getRotation() == 270)
         {
             x2 = x + 1;
+
+            if(squirrel.squirrelFlowers() & squirrel.type() == "Brown")
+            {
+                y3 = y - 1;
+            }
+            if(squirrel.squirrelFlowers() & squirrel.type() == "Black")
+            {
+                x3 = x + 1;
+                y3 = y - 1;
+            }
         }
 
-        return new int[] {x2, y2};
+        return new int[] {x2, y2, x3, y3};
     }
 
     /**
@@ -379,11 +451,11 @@ public class GameBoard implements ActionListener
      * @param y2 y coordinate of squirrel's tail.
      * @return true if squirrel is within the boundary.
      */
-    public boolean inBoundary(int x, int y, int x2, int y2)
+    public boolean inBoundary(int x, int y, int x2, int y2, int x3, int y3)
     {
         boolean inBoundary = true;
         
-        if(x > 3 | x < 0 | y > 3 | y < 0 | x2 > 3 | x2 < 0 | y2 > 3 | y2 < 0)
+        if(x > 3 | x < 0 | y > 3 | y < 0 | x2 > 3 | x2 < 0 | y2 > 3 | y2 < 0 | x3 > 3 | x3 < 0 | y3 > 3 | y3 < 0)
         {
             inBoundary = false;
         }

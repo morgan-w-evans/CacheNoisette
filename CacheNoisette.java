@@ -12,13 +12,17 @@ public class CacheNoisette
 {
     public static void main (String[] args)
     {
-        GameBoard program = new GameBoard();
-        Squirrel red = new Squirrel("red", 270);
-        program.add(red, 1, 1, false);
+        GameBoard g = new GameBoard();
+        GUI u = new GUI();
 
-        Squirrel grey = new Squirrel("grey", 0);
-        program.add(grey, 2, 2, false);
+        if(u.level() == 1)
+        {
+            Squirrel red = new Squirrel("red", 270);
+            Squirrel grey = new Squirrel("grey", 0);
 
-        program.addFlower(1,2);
+            g.add(red, 1, 1);
+            g.add(grey, 2, 2);
+            g.addFlower(1, 2);
+        }
     }
 }

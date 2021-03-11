@@ -11,11 +11,12 @@ public class Squirrel
 {
     private int rotation;
     private Picture squirrelPicture[] = new Picture[4];
-    private Picture head, tail;
+    private Picture head, tail, flowers;
+    private boolean squirrelFlowers = false;
     private boolean nutDropped = false;
     //private JButton squirrel[] = new JButton[4];
 
-    int elements = 2;
+    
     String name, filePath;
 
     public Squirrel(String colourInput, int rot)
@@ -35,11 +36,13 @@ public class Squirrel
         {
             this.name = "brown";
             this.filePath = "Brown";
+            this.squirrelFlowers = true;
         }
         else if(colourInput == "black" | colourInput == "BLACK" | colourInput == "Black")
         {
             this.name = "black";
             this.filePath = "Black";
+            this.squirrelFlowers = true;
         }
         else
         {
@@ -55,12 +58,13 @@ public class Squirrel
 
         this.head = this.squirrelPicture[0];
         this.tail = this.squirrelPicture[2];
+        this.flowers = this.squirrelPicture[3];
     }
 
     /**
      * Returns image for desired part of the squirrel.
      * 
-     * @param choice enter: "nut", "head", "tail" or "flowers".
+     * @param choice enter: "head", "tail" or "flowers".
      * @return picture of squirrel's body part.
      */
     public Picture add(String choice)
@@ -74,6 +78,10 @@ public class Squirrel
         else if(choice == "tail")
         {
             return this.tail;
+        }
+        else if(choice == "flowers")
+        {
+            return this.flowers;
         }
         else{
             
@@ -109,5 +117,15 @@ public class Squirrel
     public int getRotation()
     {
         return this.rotation;
+    }
+
+    public boolean squirrelFlowers()
+    {
+        return this.squirrelFlowers;
+    }
+
+    public String type()
+    {
+        return this.filePath;
     }
 }
