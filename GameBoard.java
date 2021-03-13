@@ -17,7 +17,6 @@ public class GameBoard implements ActionListener
     private JPanel windowPanel = new JPanel();
     private GridLayout windowLayout = new GridLayout(2, 1);
     private JPanel gui = new JPanel();
-    private GUI gui2 = new GUI();
     private JPanel outerPanel = new JPanel();
     private JPanel innerPanel = new JPanel();
     private GridLayout innerLayout = new GridLayout(4, 4);
@@ -39,12 +38,11 @@ public class GameBoard implements ActionListener
     private HoleTile holeTile[] = new HoleTile[4];
     private int tileAccess[][] = new int[4][4];
 
-    // Flower icon
+    // Flower block icon
     private Picture flower = new Picture("icons/Flower.png", 0);
+    private Icon savedIconFlowerBlock[][] = new Icon[4][4];
 
-    // Storing squirrels
-    private int xCoord;
-    private int yCoord;
+    // Squirrels
     private Icon savedIconHead[][] = new Icon[4][4];
     private Icon savedIconTail[][] = new Icon[4][4];
     private Icon savedIconFlowers[][] = new Icon[4][4];
@@ -59,9 +57,9 @@ public class GameBoard implements ActionListener
     private boolean levelComplete = false;
 
     /**
-     * Creates a gameboard window.
+     * Creates an instance of GameBoard.
      */
-    public GameBoard()
+    public GameBoard(GUI gui2)
     {
         // Initialising the window.
         window.setTitle("Cache Noisettes!");
@@ -139,30 +137,22 @@ public class GameBoard implements ActionListener
         window.setContentPane(windowPanel);
         window.setVisible(true);
 
-        // Initialising array to store squirrel in
-        // Allowing access to all tiles
-        for(int m = 0; m < 4; m++)
-        {
-            for(int n = 0; n < 4; n++)
-            {
-                this.savedSquirrel[n][m] = new Squirrel("red", 0);
+        // Initialising squirrel store array
+        // Initialising tile access array
+        for (int m = 0; m < 4; m++) {
+
+            for (int n = 0; n < 4; n++) {
+
+                this.savedSquirrel[n][m] = new Squirrel("red", 0, 0, 0);
                 this.tileAccess[n][m] = 1;
             }
         }
 
-        // Initialsing hole identifier
+        // Initialsing holes as empty
         this.holeEmpty[2][0] = 1;
         this.holeEmpty[0][1] = 1;
         this.holeEmpty[1][2] = 1;
         this.holeEmpty[3][3] = 1;
-    }
-
-    public void addGUI(GUI u)
-    {
-        this.gui = u.fetch();
-        
-        
-        
     }
 
     /**
@@ -188,43 +178,37 @@ public class GameBoard implements ActionListener
      * Adds a squirrel onto the gameboard.
      * 
      * @param squirrel squirrel to add.
-     * @param x x-coordinate of the head. (0,0) to (3,3)
-     * @param y y-coordinate of the head. (0,0) to (3,3)
      */
-    public void add(Squirrel squirrel, int x, int y)
+    public void add(Squirrel squirrel)
     {
-        // Determining location of the squirrel pieces
-        int secondCoord[] = pieceLocation(squirrel, x, y);
-        int x2 = secondCoord[0], y2 = secondCoord[1], x3 = secondCoord[2], y3 = secondCoord[3];
-
         // Update tile access
-        this.tileAccess[x][y] = 0;
-        this.tileAccess[x2][y2] = 0;
+        this.tileAccess[squirrel.xHeadPos()][squirrel.yHeadPos()] = 0;
+        this.tileAccess[squirrel.xTailPos()][squirrel.yTailPos()] = 0;
         
         // Adding squirrel by replacing icons. Stores icons and squirrels in arrays for retrieval
-        savedIconHead[y][x] = this.cell[y][x].getIcon();
-        this.cell[y][x].setIcon(squirrel.add("head"));
-        this.cell[y][x].addActionListener(this);
+        savedIconHead[squirrel.yHeadPos()][squirrel.xHeadPos()] = this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].getIcon();
+        this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].setIcon(squirrel.add("head"));
+        this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].addActionListener(this);
 
-        savedIconTail[y2][x2] = this.cell[y2][x2].getIcon();
-        this.cell[y2][x2].setIcon(squirrel.add("tail"));
+        savedIconTail[squirrel.yTailPos()][squirrel.xTailPos()] = this.cell[squirrel.yTailPos()][squirrel.xTailPos()].getIcon();
+        this.cell[squirrel.yTailPos()][squirrel.xTailPos()].setIcon(squirrel.add("tail"));
         
         // Adding flower piece
-        if(squirrel.squirrelFlowers())
-        {
-            this.tileAccess[x3][y3] = 0;
-            savedIconFlowers[y3][x3] = this.cell[y3][x3].getIcon();
-            this.cell[y3][x3].setIcon(squirrel.add("flowers"));
+        if (squirrel.type() == "Brown" | squirrel.type() == "Black") {
+
+            this.tileAccess[squirrel.xFlowersPos()][squirrel.yFlowersPos()] = 0;
+            savedIconFlowers[squirrel.yFlowersPos()][squirrel.xFlowersPos()] = this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].getIcon();
+            this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].setIcon(squirrel.add("flowers"));
         }
 
-        savedSquirrel[x][y] = squirrel;
+        savedSquirrel[squirrel.xHeadPos()][squirrel.yHeadPos()] = squirrel;
 
         // Squirrel counter
         this.squirrelCount++;
 
-        if(this.squirrelCount >= 5)
-        {
-            this.remove(squirrel, x, y);
+        if (this.squirrelCount >= 5) {
+
+            this.remove(squirrel);
             System.out.println("Squirrel removed. Maximum of 4 on the board at once.");
         }
     }
@@ -233,33 +217,27 @@ public class GameBoard implements ActionListener
      * Removes a squirrel from the gameboard.
      * 
      * @param squirrel squirrel to remove.
-     * @param x x-coordinate of the head. (0,0) to (3,3)
-     * @param y y-coordinate of the head. (0,0) to (3,3)
      */
-    public void remove(Squirrel squirrel, int x, int y)
+    public void remove(Squirrel squirrel)
     {
-        // Determining the location of the squirrel pieces
-        int secondCoord[] = pieceLocation(squirrel, x, y);
-        int x2 = secondCoord[0], y2 = secondCoord[1], x3 = secondCoord[2], y3 = secondCoord[3];
-        
         // Make tile available again
-        this.tileAccess[x][y] = 1;
-        this.tileAccess[x2][y2] = 1;
+        this.tileAccess[squirrel.xHeadPos()][squirrel.yHeadPos()] = 1;
+        this.tileAccess[squirrel.xTailPos()][squirrel.yTailPos()] = 1;
         
         // Removing squirrel by replacing icons
-        this.cell[y][x].setIcon(savedIconHead[y][x]);
-        this.cell[y][x].removeActionListener(this);
+        this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].setIcon(savedIconHead[squirrel.yHeadPos()][squirrel.xHeadPos()]);
+        this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].removeActionListener(this);
 
-        this.cell[y2][x2].setIcon(savedIconTail[y2][x2]);
+        this.cell[squirrel.yTailPos()][squirrel.xTailPos()].setIcon(savedIconTail[squirrel.yTailPos()][squirrel.xTailPos()]);
         
         // Removing flower piece
-        if(squirrel.squirrelFlowers())
-        {
-            this.tileAccess[x3][y3] = 1;
-            this.cell[y3][x3].setIcon(savedIconFlowers[y3][x3]);
+        if (squirrel.type() == "Brown" | squirrel.type() == "Black") {
+
+            this.tileAccess[squirrel.xFlowersPos()][squirrel.yFlowersPos()] = 1;
+            this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].setIcon(savedIconFlowers[squirrel.yFlowersPos()][squirrel.xFlowersPos()]);
         }
 
-        savedSquirrel[x][y] = null;
+        savedSquirrel[squirrel.xHeadPos()][squirrel.yHeadPos()] = null;
 
         // Squirrel counter
         this.squirrelCount--;
@@ -268,12 +246,75 @@ public class GameBoard implements ActionListener
     /**
      * Adds a flower block onto the gameboard, to prevent holes from being used.
      * 
-     * @param x x-coordinate to be placed at. (0,0) to (3,3)
-     * @param y y-coordinate to be placed at. (0,0) to (3,3)
+     * @param y y-coordinate of hole. (0-3)
      */
-    public void addFlower(int x, int y)
+    public void addFlowerBlock(int y)
     {
+        int x = 4;
+
+        // Initiate x position based on location of hole
+        if (y == 0) {
+
+            x = 2;
+        }
+        else if (y == 1) {
+
+            x = 0;
+        }
+        else if (y == 2) {
+
+            x = 1;
+        }
+        else if (y == 3) {
+
+            x = 3;
+        }
+        else {
+
+            System.out.println("Incorrect value");
+            return;
+        }
+
+        // Replace icon and revoke tile access
+        this.savedIconFlowerBlock[x][y] = this.cell[y][x].getIcon();
         this.cell[y][x].setIcon(this.flower);
+        this.tileAccess[x][y] = 0;
+    }
+
+    /**
+     * Removes a flower block from the gameboard, to allow holes to be used.
+     * 
+     * @param y y-coordinate of hole. (0-3)
+     */
+    public void removeFlowerBlock(int y)
+    {
+        int x = 4;
+
+        // Initiate x position based on location of hole
+        if (y == 0) {
+
+            x = 2;
+        }
+        else if (y == 1) {
+
+            x = 0;
+        }
+        else if (y == 2) {
+
+            x = 1;
+        }
+        else if (y == 3) {
+
+            x = 3;
+        }
+        else {
+            
+            System.out.println("Incorrect value");
+            return;
+        }
+        
+        // Reset icon and allow tile access
+        this.cell[y][x].setIcon(this.savedIconFlowerBlock[x][y]);
         this.tileAccess[x][y] = 0;
     }
 
@@ -284,41 +325,40 @@ public class GameBoard implements ActionListener
      */
     public void actionPerformed(ActionEvent e)
     {
-        // Squirrel Selection
-        for(int m = 0; m < 4; m++)
-        {
-            for(int n = 0; n < 4; n++)
-            {
-                if(e.getSource() == cell[n][m])
-                {
-                    this.xCoord = m;
-                    this.yCoord = n;
+        // Identify squirrel clicked
+        for (int m = 0; m < 4; m++) {
+
+            for (int n = 0; n < 4; n++) {
+
+                if (e.getSource() == cell[n][m]) {
+
                     selectedSquirrel = savedSquirrel[m][n];
                 }
             }
         }
         
-        if(Objects.isNull(this.xCoord) | Objects.isNull(this.yCoord) | Objects.isNull(this.selectedSquirrel))
-        {
+        // Don't allow use of arrow buttons if a squirrel hasn't been selected
+        if (Objects.isNull(this.selectedSquirrel)) {
+
             return;
         }
         
         // Navigation Button Event
-        if(e.getSource() == upButton)
-        {
-            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord, this.yCoord-1);
+        else if (e.getSource() == upButton) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos(), selectedSquirrel.yHeadPos()-1);
         }
-        if(e.getSource() == downButton)
-        {
-            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord, this.yCoord+1);
+        else if (e.getSource() == downButton) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos(), selectedSquirrel.yHeadPos()+1);
         }
-        if(e.getSource() == leftButton)
-        {
-            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord-1, this.yCoord);
+        else if (e.getSource() == leftButton) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos()-1, selectedSquirrel.yHeadPos());
         }
-        if(e.getSource() == rightButton)
-        {
-            this.move(this.selectedSquirrel, this.xCoord, this.yCoord, this.xCoord+1, this.yCoord);
+        else if (e.getSource() == rightButton) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos()+1, selectedSquirrel.yHeadPos());
         }
     }
 
@@ -326,44 +366,59 @@ public class GameBoard implements ActionListener
      * Moves a squirrel from one position to another.
      * 
      * @param squirrel squirrel to be moved.
-     * @param xCurrent current x-position of the squirrel.
-     * @param yCurrent current y-position of the squirrel.
      * @param xNew new x-position to move squirrel to.
      * @param yNew new y-position to move squirrel to.
      */
-    public void move(Squirrel squirrel, int xCurrent, int yCurrent, int xNew, int yNew)
+    public void move(Squirrel squirrel, int xNew, int yNew)
     {
-        int coord[] = pieceLocation(squirrel, xNew, yNew);
+        // Store current squirrel coordinates in the event of a revert
+        int restoreXHeadPos = squirrel.xHeadPos();
+        int restoreYHeadPos = squirrel.yHeadPos();
+
+        // Update squirrel to new coordinates and check boundary. If not in boundary, revert coordinate change and return
+        squirrel.xHeadPos(xNew);
+        squirrel.yHeadPos(yNew);
         
-        if(this.inBoundary(xNew, yNew, coord[0], coord[1], coord[2], coord[3])==false){
+        if (this.inBoundary(squirrel) == false) {
+
+            squirrel.xHeadPos(restoreXHeadPos);
+            squirrel.yHeadPos(restoreYHeadPos);
             return;
         }
         
-        this.remove(squirrel, xCurrent, yCurrent);
+        // Remove squirrel at original position to remove potential for blocked tiles
+        squirrel.xHeadPos(restoreXHeadPos);
+        squirrel.yHeadPos(restoreYHeadPos);
+        this.remove(squirrel);
 
-        if(this.tileAccess[xNew][yNew] == 0 | this.tileAccess[coord[0]][coord[1]] == 0 | this.tileAccess[coord[2]][coord[3]] == 0)
-        {
-            this.add(squirrel, xCurrent, yCurrent);
+        // Apply new coordinates to add new squirrel in
+        squirrel.xHeadPos(xNew);
+        squirrel.yHeadPos(yNew);
+
+        // Check to ensure new location is empty, if not add original squirrel back and finish.
+        if (this.tileAccess[squirrel.xHeadPos()][squirrel.yHeadPos()] == 0 | this.tileAccess[squirrel.xTailPos()][squirrel.yTailPos()] == 0 | this.tileAccess[squirrel.xFlowersPos()][squirrel.yFlowersPos()] == 0) {
+            
+            squirrel.xHeadPos(restoreXHeadPos);
+            squirrel.yHeadPos(restoreYHeadPos);
+            this.add(squirrel);
         }
-        else{
-            //this.add(squirrel, xCurrent, yCurrent, flowers);
-
-            this.xCoord = xNew;
-            this.yCoord = yNew;
-
+        else {
+            
             // Applying nut drop rule
-            if(xNew == 2 & yNew == 0 & holeEmpty[2][0] == 1 & squirrel.nutDropped()==false| xNew == 0 & yNew == 1 & holeEmpty[0][1] == 1 & squirrel.nutDropped()==false| xNew == 1 & yNew == 2 & holeEmpty[1][2] == 1 & squirrel.nutDropped()==false| xNew == 3 & yNew == 3 & holeEmpty[3][3] == 1 & squirrel.nutDropped()==false)
-            {
+            if (xNew == 2 & yNew == 0 & holeEmpty[2][0] == 1 & squirrel.nutDropped()==false | xNew == 0 & yNew == 1 & holeEmpty[0][1] == 1 & squirrel.nutDropped()==false| xNew == 1 & yNew == 2 & holeEmpty[1][2] == 1 & squirrel.nutDropped()==false| xNew == 3 & yNew == 3 & holeEmpty[3][3] == 1 & squirrel.nutDropped()==false) {
+                
                 squirrel.nutDrop();
                 this.holeEmpty[xNew][yNew] = 0;
                 this.cell[yNew][xNew].setIcon(holeNut);
                 this.nutDropCount++;
             }
 
-            this.add(squirrel, xNew, yNew);
+            // Add squirrel in new position
+            this.add(squirrel);
 
-            if(nutDropCount == squirrelCount)
-            {
+            // Test for level completion
+            if (nutDropCount == squirrelCount) {
+                
                 levelComplete = true;
                 System.out.println("Level Complete");
             }
@@ -371,92 +426,17 @@ public class GameBoard implements ActionListener
     }
 
     /**
-     * Calculates the coordinates of the squirrel's tail and flowers, based on the rotation of the squirrel.
+     * Checks to ensure that the squirrel remains on the gameboard.
      * 
-     * @param squirrel squirrel in question.
-     * @param x x position of squirrel's head.
-     * @param y y position of squirrel's head.
-     * @return returns the coordinates of the squirrel's tail and flowers as an array {xTail, yTail, xFlowers, yFlowers}.
-     */
-    public int[] pieceLocation(Squirrel squirrel, int x, int y)
-    {
-        int x2 = x, y2 = y, x3 = x, y3 = y;
-
-        if(squirrel.getRotation() == 0)
-        {
-            y2 = y + 1;
-
-            if(squirrel.squirrelFlowers() & squirrel.type() == "Brown")
-            {
-                x3 = x + 1;
-            }
-            if(squirrel.squirrelFlowers() & squirrel.type() == "Black")
-            {
-                x3 = x + 1;
-                y3 = y - 1;
-            }
-        }
-        if(squirrel.getRotation() == 90)
-        {
-            x2 = x - 1;
-
-            if(squirrel.squirrelFlowers() & squirrel.type() == "Brown")
-            {
-                y3 = y - 1;
-            }
-            if(squirrel.squirrelFlowers() & squirrel.type() == "Black")
-            {
-                x3 = x - 1;
-                y3 = y + 1;
-            }
-        }
-        if(squirrel.getRotation() == 180)
-        {
-            y2 = y - 1;
-
-            if(squirrel.squirrelFlowers() & squirrel.type() == "Brown")
-            {
-                y3 = x - 1;
-            }
-            if(squirrel.squirrelFlowers() & squirrel.type() == "Black")
-            {
-                x3 = x - 1;
-                y3 = y - 1;
-            }
-        }
-        if(squirrel.getRotation() == 270)
-        {
-            x2 = x + 1;
-
-            if(squirrel.squirrelFlowers() & squirrel.type() == "Brown")
-            {
-                y3 = y - 1;
-            }
-            if(squirrel.squirrelFlowers() & squirrel.type() == "Black")
-            {
-                x3 = x + 1;
-                y3 = y - 1;
-            }
-        }
-
-        return new int[] {x2, y2, x3, y3};
-    }
-
-    /**
-     * Checks to ensure that the new location of the squirrel remains on the gameboard.
-     * 
-     * @param x x coordinate of squirrel's head.
-     * @param y y coordinate of squirrel's head.
-     * @param x2 x coordinate of squirrel's tail.
-     * @param y2 y coordinate of squirrel's tail.
+     * @param squirrel squirrel to check boundary of.
      * @return true if squirrel is within the boundary.
      */
-    public boolean inBoundary(int x, int y, int x2, int y2, int x3, int y3)
+    public boolean inBoundary(Squirrel squirrel)
     {
         boolean inBoundary = true;
         
-        if(x > 3 | x < 0 | y > 3 | y < 0 | x2 > 3 | x2 < 0 | y2 > 3 | y2 < 0 | x3 > 3 | x3 < 0 | y3 > 3 | y3 < 0)
-        {
+        if (squirrel.xHeadPos() > 3 | squirrel.xHeadPos() < 0 | squirrel.yHeadPos() > 3 | squirrel.yHeadPos() < 0 | squirrel.xTailPos() > 3 | squirrel.xTailPos() < 0 | squirrel.yTailPos() > 3 | squirrel.yTailPos() < 0 | squirrel.xFlowersPos() > 3 | squirrel.xFlowersPos() < 0 | squirrel.yFlowersPos() > 3 | squirrel.yFlowersPos() < 0) {
+            
             inBoundary = false;
         }
         

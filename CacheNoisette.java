@@ -1,3 +1,5 @@
+import java.util.*;
+
 /**
  * Cache Noisette has been designed as part of the SCC.110 Java Coursework for 2020-21.
  * 
@@ -12,17 +14,50 @@ public class CacheNoisette
 {
     public static void main (String[] args)
     {
-        GameBoard g = new GameBoard();
         GUI u = new GUI();
+        GameBoard g = new GameBoard(u);
+        boolean play = true;
+        
+        Squirrel redUp = new Squirrel("red", 0, 0, 0);
+        Squirrel redRight = new Squirrel("red", 0, 0, 90);
+        Squirrel redDown = new Squirrel("red", 0, 0, 180);
+        Squirrel redLeft = new Squirrel("red", 0, 0, 270);
 
-        if(u.level() == 1)
-        {
-            Squirrel red = new Squirrel("red", 270);
-            Squirrel grey = new Squirrel("grey", 0);
+        Squirrel greyUp = new Squirrel("grey", 0, 0, 0);
+        Squirrel greyRight = new Squirrel("grey", 0, 0, 90);
+        Squirrel greyDown = new Squirrel("grey", 0, 0, 180);
+        Squirrel greyLeft = new Squirrel("grey", 0, 0, 270);
 
-            g.add(red, 1, 1);
-            g.add(grey, 2, 2);
-            g.addFlower(1, 2);
+        Squirrel brownUp = new Squirrel("brown", 0, 0, 0);
+        Squirrel brownRight = new Squirrel("brown", 0, 0, 90);
+        Squirrel brownDown = new Squirrel("brown", 0, 0, 180);
+        Squirrel brownLeft = new Squirrel("brown", 0, 0, 270);
+
+        Squirrel blackUp = new Squirrel("black", 0, 0, 90);
+        Squirrel blackRight = new Squirrel("black", 0, 0, 90);
+        Squirrel blackDown = new Squirrel("black", 0, 0, 180);
+        Squirrel blackLeft = new Squirrel("black", 0, 0, 270);
+
+        while (play) {
+
+            System.out.print("");
+
+            if (u.level() == 1) {
+
+                g.add(redRight);
+                g.move(redRight, 1, 1);
+                g.add(greyUp);
+                
+                g.move(greyUp, 2, 2);
+                g.addFlowerBlock(2);
+            }
+            else if (u.level() == 101 | g.levelComplete()) {
+
+                g.remove(redRight);
+                g.remove(greyUp);
+                g.removeFlowerBlock(2);
+            }
+
         }
     }
 }

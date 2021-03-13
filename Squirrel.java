@@ -9,43 +9,41 @@ import java.awt.event.*;
  */
 public class Squirrel
 {
-    private int rotation;
+    private int xHeadPos, yHeadPos, xTailPos, yTailPos, xFlowersPos, yFlowersPos, rotation;
     private Picture squirrelPicture[] = new Picture[4];
-    private Picture head, tail, flowers;
-    private boolean squirrelFlowers = false;
+    private Picture head;
     private boolean nutDropped = false;
-    //private JButton squirrel[] = new JButton[4];
+    private String filePath;
 
-    
-    String name, filePath;
-
-    public Squirrel(String colourInput, int rot)
+    /**
+     * Creates an instance of Squirrel.
+     * 
+     * @param colourInput colour of squirrel. (Red, Grey, Brown or Black)
+     * @param x x-coordinate of squirrel's head. (0-3)
+     * @param y y-coordinate of squirrel's head. (0-3)
+     * @param rot direction of squirrel. (0, 90, 180 or 270)
+     */
+    public Squirrel(String colourInput, int x, int y, int rot)
     {
-        //Mathcing input selection
-        if(colourInput == "red" | colourInput == "RED" | colourInput == "Red")
-        {
-            this.name = "red";
+        //Mathcing various input formats to the correct filename format
+        if (colourInput == "red" | colourInput == "RED" | colourInput == "Red") {
+
             this.filePath = "Red";
         }
-        else if(colourInput == "grey" | colourInput == "GREY" | colourInput == "Grey")
-        {
-            this.name = "grey";
+        else if (colourInput == "grey" | colourInput == "GREY" | colourInput == "Grey") {
+
             this.filePath = "Grey";
         }
-        else if(colourInput == "brown" | colourInput == "BROWN" | colourInput == "Brown")
-        {
-            this.name = "brown";
+        else if (colourInput == "brown" | colourInput == "BROWN" | colourInput == "Brown") {
+
             this.filePath = "Brown";
-            this.squirrelFlowers = true;
         }
-        else if(colourInput == "black" | colourInput == "BLACK" | colourInput == "Black")
-        {
-            this.name = "black";
+        else if (colourInput == "black" | colourInput == "BLACK" | colourInput == "Black") {
+
             this.filePath = "Black";
-            this.squirrelFlowers = true;
         }
-        else
-        {
+        else {
+
             System.out.println("Invalid squirrel colour");
         }
 
@@ -55,10 +53,84 @@ public class Squirrel
         this.squirrelPicture[1] = new Picture("icons/"+filePath+"Squirrel1.png", this.rotation);
         this.squirrelPicture[2] = new Picture("icons/"+filePath+"Squirrel2.png", this.rotation);
         this.squirrelPicture[3] = new Picture("icons/SquirrelFlower.png", 0);
-
         this.head = this.squirrelPicture[0];
-        this.tail = this.squirrelPicture[2];
-        this.flowers = this.squirrelPicture[3];
+
+        // Save coordinates of squirrel
+        this.xHeadPos = x;
+        this.yHeadPos = y;
+
+        // Calculate tail and flower coordinates
+        this.calculatePieceLocation();
+    }
+
+    /**
+     * Calculates the coordinates of the tail and flower pieces (if applicable), based on the head coordinates.
+     */
+    public void calculatePieceLocation()
+    {
+        // Initiate coordinates
+        this.xTailPos = this.xHeadPos;
+        this.yTailPos = this.yHeadPos;
+        this.xFlowersPos = this.xHeadPos;
+        this.yFlowersPos = this.yHeadPos;
+
+        // Alter coordinates based on rotation
+        if (this.rotation == 0) {
+
+            this.yTailPos = this.yHeadPos + 1;
+
+            if (this.filePath == "Brown") {
+
+                this.xFlowersPos = this.xHeadPos + 1;
+            }
+            else if (this.filePath == "Black") {
+
+                this.xFlowersPos = this.xHeadPos + 1;
+                this.yFlowersPos = this.yHeadPos - 1;
+            }
+        }
+        else if (this.rotation == 90) {
+
+            this.xTailPos = this.xHeadPos - 1;
+
+            if (this.filePath == "Brown") {
+
+                this.yFlowersPos = this.yHeadPos - 1;
+            }
+            else if (this.filePath == "Black") {
+
+                this.xFlowersPos = this.xHeadPos - 1;
+                this.yFlowersPos = this.yHeadPos + 1;
+            }
+        }
+        else if (this.rotation == 180) {
+
+            this.yTailPos = this.yHeadPos - 1;
+
+            if (this.filePath == "Brown") {
+
+                this.xFlowersPos = this.xHeadPos - 1;
+            }
+            else if (this.filePath == "Black") {
+
+                this.xFlowersPos = this.xHeadPos - 1;
+                this.yFlowersPos = this.yHeadPos - 1;
+            }
+        }
+        else if (this.rotation == 270) {
+
+            this.xTailPos = this.xHeadPos + 1;
+
+            if (this.filePath == "Brown") {
+
+                this.yFlowersPos = this.yHeadPos - 1;
+            }
+            else if (this.filePath == "Black") {
+
+                this.xFlowersPos = this.xHeadPos + 1;
+                this.yFlowersPos = this.yHeadPos - 1;
+            }
+        }
     }
 
     /**
@@ -71,19 +143,19 @@ public class Squirrel
     {
         int n = 0;
 
-        if(choice == "head")
-        {
+        if (choice == "head") {
+
             return this.head;
         }
-        else if(choice == "tail")
-        {
-            return this.tail;
+        else if (choice == "tail") {
+
+            return this.squirrelPicture[2];
         }
-        else if(choice == "flowers")
-        {
-            return this.flowers;
+        else if (choice == "flowers") {
+
+            return this.squirrelPicture[3];
         }
-        else{
+        else {
             
             System.out.println("Incorrect squirrel part");
             return null;
@@ -91,7 +163,7 @@ public class Squirrel
     }
 
     /**
-     * Updates squirrel's head to icon without nut.
+     * Updates squirrel's head when nut is dropped.
      */
     public void nutDrop()
     {
@@ -112,20 +184,102 @@ public class Squirrel
     /**
      * Returns the rotation of the squirrel.
      * 
-     * @return squirrel rotation (int).
+     * @return squirrel rotation.
      */
     public int getRotation()
     {
         return this.rotation;
     }
 
-    public boolean squirrelFlowers()
-    {
-        return this.squirrelFlowers;
-    }
-
+    /**
+     * Returns filePath string.
+     * 
+     * @return squirrel colour.
+     */
     public String type()
     {
         return this.filePath;
+    }
+
+    /**
+     * Returns x-coordinate of the squirrel's head.
+     * 
+     * @return head x-coordinate
+     */
+    public int xHeadPos()
+    {
+        return this.xHeadPos;
+    }
+
+    /**
+     * Updates x-coordinate of the squirrel's head and recalculates the other cooridnates.
+     * 
+     * @param i head x-coordinate.
+     */
+    public void xHeadPos(int i)
+    {
+        this.xHeadPos = i;
+        this.calculatePieceLocation();
+    }
+
+    /**
+     * Returns y-coordinate of the squirrel's head.
+     * 
+     * @return head y-coordinate.
+     */
+    public int yHeadPos()
+    {
+        return this.yHeadPos;
+    }
+
+    /**
+     * Updates y-coordinate of the squirrel's head and recalculates the other coordinates.
+     * 
+     * @param i head y-coordinate.
+     */
+    public void yHeadPos(int i)
+    {
+        this.yHeadPos = i;
+        this.calculatePieceLocation();
+    }
+
+    /**
+     * Returns x-coordinate of the squirrel's tail.
+     * 
+     * @return tail x-coordinate.
+     */
+    public int xTailPos()
+    {
+        return this.xTailPos;
+    }
+
+    /**
+     * Returns the y-cooridnate of the squirrel's tail.
+     * 
+     * @return tail y-coordinate.
+     */
+    public int yTailPos()
+    {
+        return this.yTailPos;
+    }
+
+    /**
+     * Returns the x-cooridnate of the squirrel's flowers (if applicable).
+     * 
+     * @return flowers x-coordinate.
+     */
+    public int xFlowersPos()
+    {
+        return this.xFlowersPos;
+    }
+
+    /**
+     * Returns the y-coordinate of the squirrel's flowers (if applicable).
+     * 
+     * @return flowers y-coordinate.
+     */
+    public int yFlowersPos()
+    {
+        return this.yFlowersPos;
     }
 }
