@@ -49,7 +49,6 @@ public class GUI implements ActionListener
         if(e.getSource() == this.startGameButton)
         {
             this.levelSelect = 1;
-            System.out.println("Test");
         }
         if(e.getSource() == this.levelsButton)
         {
@@ -57,7 +56,7 @@ public class GUI implements ActionListener
         }
         if(e.getSource() == this.howToPlayButton)
         {
-            System.out.println("How to Play");
+            HowToPlay h = new HowToPlay();
         }
     }
 

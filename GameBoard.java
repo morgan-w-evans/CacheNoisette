@@ -10,7 +10,7 @@ import java.util.Objects;
      * 
      * @author Morgan Evans
      */
-public class GameBoard implements ActionListener
+public class GameBoard implements ActionListener, KeyListener
 {
     // Generates the window and layout.
     private JFrame window = new JFrame();
@@ -55,6 +55,10 @@ public class GameBoard implements ActionListener
     private int holeEmpty[][] = new int[4][4];
     private int nutDropCount = 0;
     private boolean levelComplete = false;
+
+    // Additional Features
+    private int moveCount = 0;
+    private long startTime, timeTaken;
 
     /**
      * Creates an instance of GameBoard.
@@ -153,6 +157,9 @@ public class GameBoard implements ActionListener
         this.holeEmpty[0][1] = 1;
         this.holeEmpty[1][2] = 1;
         this.holeEmpty[3][3] = 1;
+
+        // Implement key listener
+        outerPanel.addKeyListener(this);
     }
 
     /**
@@ -362,6 +369,43 @@ public class GameBoard implements ActionListener
         }
     }
 
+    public void keyTyped(KeyEvent e)
+    {
+        
+    }
+
+    public void keyPressed(KeyEvent e)
+    {
+        keyAction(e);
+    }
+
+    public void keyReleased(KeyEvent e)
+    {
+        
+    }
+
+    public void keyAction(KeyEvent e)
+    {
+        int code = e.getKeyCode();
+        System.out.println(code);
+
+        if (Objects.isNull(this.selectedSquirrel)) {
+
+            return;
+        }
+        
+        if (code == KeyEvent.VK_UP) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos(), selectedSquirrel.yHeadPos()-1);
+            System.out.println("IT WORKED");
+        }
+
+        if (code == KeyEvent.VK_DOWN) {
+
+            System.out.println("Down");
+        }
+    }
+
     /**
      * Moves a squirrel from one position to another.
      * 
@@ -415,12 +459,20 @@ public class GameBoard implements ActionListener
 
             // Add squirrel in new position
             this.add(squirrel);
+            moveCount++;
 
             // Test for level completion
             if (nutDropCount == squirrelCount) {
                 
+                this.moveCount = this.moveCount - this.squirrelCount;
+                this.timeTaken = System.currentTimeMillis() - this.startTime;
+                long secondsTaken = this.timeTaken / 1000;
+                long secondsDisplay = secondsTaken % 60;
+                long minutesDisplay = secondsTaken / 60;
                 levelComplete = true;
                 System.out.println("Level Complete");
+                System.out.println("Level completed in " + this.moveCount + " moves!");
+                System.out.println("Level complete in: " + minutesDisplay + " minutes, " + secondsDisplay + " seconds.");
             }
         }
     }
@@ -451,5 +503,15 @@ public class GameBoard implements ActionListener
     public boolean levelComplete()
     {
         return this.levelComplete;
+    }
+
+    public int returnMoveCount()
+    {
+        return this.moveCount;
+    }
+
+    public void startTimer()
+    {
+        this.startTime = System.currentTimeMillis();
     }
 }
