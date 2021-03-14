@@ -14,6 +14,7 @@ public class HowToPlay
         window.setTitle("How To Play");
         window.setSize(1200, 825);
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        window.setLocationRelativeTo(null);
 
         panel.setSize(1200,800);
         panel.setLocation(0, 0);

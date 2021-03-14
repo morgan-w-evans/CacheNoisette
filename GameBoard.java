@@ -16,7 +16,7 @@ public class GameBoard implements ActionListener, KeyListener
     private JFrame window = new JFrame();
     private JPanel windowPanel = new JPanel();
     private GridLayout windowLayout = new GridLayout(2, 1);
-    private JPanel gui = new JPanel();
+    private int boardLevel = 0;
     private JPanel outerPanel = new JPanel();
     private JPanel innerPanel = new JPanel();
     private GridLayout innerLayout = new GridLayout(4, 4);
@@ -27,11 +27,15 @@ public class GameBoard implements ActionListener, KeyListener
     private Picture downArrow = new Picture("icons/BigArrow.png", 180);
     private Picture leftArrow = new Picture("icons/Arrow.png", 270);
     private Picture rightArrow = new Picture("icons/Arrow.png", 90);
+    private Picture resetImage = new Picture("icons/Reset.png", 0);
+    private Picture closeImage = new Picture("icons/Close.png", 0);
 
     private JButton upButton = new JButton(upArrow);
     private JButton downButton = new JButton(downArrow);
     private JButton leftButton = new JButton(leftArrow);
     private JButton rightButton = new JButton(rightArrow);
+    private JButton reset = new JButton(resetImage);
+    private JButton close = new JButton(closeImage);
 
     // Instances of the tiles are created in arrarys to construct the gameboard.
     private BlankTile blankTile[] = new BlankTile[16];
@@ -63,12 +67,15 @@ public class GameBoard implements ActionListener, KeyListener
     /**
      * Creates an instance of GameBoard.
      */
-    public GameBoard(GUI gui2)
+    public GameBoard(int level)
     {
         // Initialising the window.
-        window.setTitle("Cache Noisettes!");
-        window.setSize(1200, 625);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.boardLevel = level;
+        
+        window.setTitle("Level "+ this.boardLevel);
+        window.setSize(600, 725);
+        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        window.setLocationRelativeTo(null);
 
         // Setting the layout and adding elemets to the gameboard.
         innerPanel.setLayout(innerLayout);
@@ -122,23 +129,14 @@ public class GameBoard implements ActionListener, KeyListener
         arrowButton(downButton, 0, 500, 600, 100);
         arrowButton(rightButton, 500, 100, 100, 400);
         arrowButton(leftButton, 0, 100, 100, 400);
+        arrowButton(reset, 0, 600, 300, 100);
+        arrowButton(close, 300, 600, 300, 100);
 
         outerPanel.add(innerPanel);
         innerPanel.setLocation(100,100);
         innerPanel.setSize(400,400);
 
-        gui = gui2.fetch();
-        windowPanel.setLayout(null);
-        windowPanel.add(gui);
-        gui.setLocation(0, 0);
-        gui.setSize(600,635);
-
-        window.setVisible(true);
-        windowPanel.add(outerPanel);
-        outerPanel.setLocation(600, 0);
-        outerPanel.setSize(600,635);
-
-        window.setContentPane(windowPanel);
+        window.setContentPane(outerPanel);
         window.setVisible(true);
 
         // Initialising squirrel store array
@@ -160,6 +158,9 @@ public class GameBoard implements ActionListener, KeyListener
 
         // Implement key listener
         outerPanel.addKeyListener(this);
+
+        // Implement timer
+        this.startTime = System.currentTimeMillis();
     }
 
     /**
@@ -332,6 +333,17 @@ public class GameBoard implements ActionListener, KeyListener
      */
     public void actionPerformed(ActionEvent e)
     {
+        // Operation buttons
+        if (e.getSource() == reset) {
+
+            LevelStore l = new LevelStore(this.boardLevel);
+            window.dispose();
+        }
+        else if (e.getSource() == close) {
+
+            window.dispose();
+        }
+        
         // Identify squirrel clicked
         for (int m = 0; m < 4; m++) {
 
@@ -349,7 +361,6 @@ public class GameBoard implements ActionListener, KeyListener
 
             return;
         }
-        
         // Navigation Button Event
         else if (e.getSource() == upButton) {
 
@@ -464,15 +475,12 @@ public class GameBoard implements ActionListener, KeyListener
             // Test for level completion
             if (nutDropCount == squirrelCount) {
                 
-                this.moveCount = this.moveCount - this.squirrelCount;
                 this.timeTaken = System.currentTimeMillis() - this.startTime;
                 long secondsTaken = this.timeTaken / 1000;
                 long secondsDisplay = secondsTaken % 60;
                 long minutesDisplay = secondsTaken / 60;
-                levelComplete = true;
-                System.out.println("Level Complete");
-                System.out.println("Level completed in " + this.moveCount + " moves!");
-                System.out.println("Level complete in: " + minutesDisplay + " minutes, " + secondsDisplay + " seconds.");
+                LevelCompleted n = new LevelCompleted(this.boardLevel, this.moveCount, minutesDisplay, secondsDisplay);
+                window.dispose();
             }
         }
     }

@@ -4,6 +4,8 @@ import java.awt.event.*;
 
 public class GUI implements ActionListener
 {
+    private JFrame window = new JFrame();
+    
     private JPanel mainPanel = new JPanel();
 
     private Picture titlePicture = new Picture("icons/Title.png", 0);
@@ -23,7 +25,14 @@ public class GUI implements ActionListener
 
     public GUI()
     {
+        window.setTitle("Cache Noisettes!");
+        window.setSize(600, 625);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setLocationRelativeTo(null);
+        
         mainPanel.setLayout(null);
+        mainPanel.setSize(600, 600);
+        mainPanel.setLocation(0, 0);
         this.format(titleButton, 0, 0, 600, 244);
         this.format(startGameButton, 0, 244, 200, 203);
         this.format(levelsButton, 200, 244, 200, 203);
@@ -33,6 +42,9 @@ public class GUI implements ActionListener
         this.startGameButton.addActionListener(this);
         this.levelsButton.addActionListener(this);
         this.howToPlayButton.addActionListener(this);
+
+        window.setContentPane(mainPanel);
+        window.setVisible(true);
     }
 
     public void format(JButton button, int posX, int posY, int sizX, int sizY)
@@ -48,32 +60,15 @@ public class GUI implements ActionListener
     {
         if(e.getSource() == this.startGameButton)
         {
-            this.levelSelect = 1;
+            LevelStore l = new LevelStore(1);
         }
         if(e.getSource() == this.levelsButton)
         {
-            System.out.println("Levels");
+            Levels l = new Levels();
         }
         if(e.getSource() == this.howToPlayButton)
         {
             HowToPlay h = new HowToPlay();
         }
-    }
-
-    public JPanel fetch()
-    {
-        return this.mainPanel;
-    }
-
-    public int level()
-    {
-        int i = this.levelSelect;
-        this.levelSelect = 0;
-        return i;
-    }
-
-    public void level(int i)
-    {
-        this.levelSelect = i;
     }
 }
