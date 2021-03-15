@@ -9,11 +9,11 @@ import java.awt.event.*;
  */
 public class Squirrel
 {
+    private String filePath;
     private int xHeadPos, yHeadPos, xTailPos, yTailPos, xFlowersPos, yFlowersPos, rotation;
     private Picture squirrelPicture[] = new Picture[4];
     private Picture head;
     private boolean nutDropped = false;
-    private String filePath;
 
     /**
      * Creates an instance of Squirrel.
@@ -86,7 +86,7 @@ public class Squirrel
             else if (this.filePath == "Black") {
 
                 this.xFlowersPos = this.xHeadPos + 1;
-                this.yFlowersPos = this.yHeadPos - 1;
+                this.yFlowersPos = this.yHeadPos + 1;
             }
         }
         else if (this.rotation == 90) {
@@ -95,7 +95,7 @@ public class Squirrel
 
             if (this.filePath == "Brown") {
 
-                this.yFlowersPos = this.yHeadPos - 1;
+                this.yFlowersPos = this.yHeadPos + 1;
             }
             else if (this.filePath == "Black") {
 

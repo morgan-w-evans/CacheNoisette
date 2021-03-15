@@ -2,10 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * This class creates a graphical interface that opens when the program is run.
+ * Allows the user to begin a game, open the level select window or view the help section.
+ * When closed, the program exits.
+ */
 public class GUI implements ActionListener
 {
     private JFrame window = new JFrame();
-    
     private JPanel mainPanel = new JPanel();
 
     private Picture titlePicture = new Picture("icons/Title.png", 0);
@@ -23,6 +27,9 @@ public class GUI implements ActionListener
     private JButton level[] = new JButton[60];
     private int levelSelect = 0;
 
+    /**
+     * Creates a GUI window.
+     */
     public GUI()
     {
         window.setTitle("Cache Noisettes!");
@@ -47,7 +54,16 @@ public class GUI implements ActionListener
         window.setVisible(true);
     }
 
-    public void format(JButton button, int posX, int posY, int sizX, int sizY)
+    /**
+     * Adds the buttons to the JPanel and formats them.
+     * 
+     * @param button button to add.
+     * @param posX x-coordinate of button. (pixels)
+     * @param posY y-coordinate of button. (pixels)
+     * @param sizX button width. (pixels)
+     * @param sizY button height. (pixels)
+     */
+    private void format(JButton button, int posX, int posY, int sizX, int sizY)
     {
         mainPanel.add(button);
         button.setSize(sizX, sizY);
@@ -56,19 +72,25 @@ public class GUI implements ActionListener
         button.setRolloverEnabled(false);
     }
 
+    /**
+     * Called when an Action Event occurs.
+     */
     public void actionPerformed(ActionEvent e)
     {
         if(e.getSource() == this.startGameButton)
         {
             LevelStore l = new LevelStore(1);
+            window.dispose();
         }
         if(e.getSource() == this.levelsButton)
         {
             Levels l = new Levels();
+            window.dispose();
         }
         if(e.getSource() == this.howToPlayButton)
         {
             HowToPlay h = new HowToPlay();
+            window.dispose();
         }
     }
 }

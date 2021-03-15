@@ -341,6 +341,7 @@ public class GameBoard implements ActionListener, KeyListener
         }
         else if (e.getSource() == close) {
 
+            GUI g = new GUI();
             window.dispose();
         }
         
@@ -479,6 +480,7 @@ public class GameBoard implements ActionListener, KeyListener
                 long secondsTaken = this.timeTaken / 1000;
                 long secondsDisplay = secondsTaken % 60;
                 long minutesDisplay = secondsTaken / 60;
+                GUI g = new GUI();
                 LevelCompleted n = new LevelCompleted(this.boardLevel, this.moveCount, minutesDisplay, secondsDisplay);
                 window.dispose();
             }
