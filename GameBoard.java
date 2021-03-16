@@ -4,12 +4,12 @@ import java.awt.event.*;
 import java.util.Objects;
 
 /**
-     * This class creates the gameboard, consisiting of blank tiles, with holes inserted in preset locations.
-     * 
-     * Directional buttons are inserted surrounding the gameboard, to allow the squirrels to be controlled.
-     * 
-     * @author Morgan Evans
-     */
+ * This class creates the gameboard, consisiting of blank tiles, with holes inserted in preset locations.
+ * 
+ * Directional buttons are inserted surrounding the gameboard, to allow the squirrels to be controlled.
+ * 
+ * @author Morgan Evans
+ */
 public class GameBoard implements ActionListener, KeyListener
 {
     // Generates the window and layout.
@@ -45,6 +45,7 @@ public class GameBoard implements ActionListener, KeyListener
     // Flower block icon
     private Picture flower = new Picture("icons/Flower.png", 0);
     private Icon savedIconFlowerBlock[][] = new Icon[4][4];
+    private int flowerBlockCount = 0;
 
     // Squirrels
     private Icon savedIconHead[][] = new Icon[4][4];
@@ -157,7 +158,9 @@ public class GameBoard implements ActionListener, KeyListener
         this.holeEmpty[3][3] = 1;
 
         // Implement key listener
-        outerPanel.addKeyListener(this);
+        window.addKeyListener(this);
+        window.setFocusable(true);
+        window.requestFocus();
 
         // Implement timer
         this.startTime = System.currentTimeMillis();
@@ -258,35 +261,40 @@ public class GameBoard implements ActionListener, KeyListener
      */
     public void addFlowerBlock(int y)
     {
-        int x = 4;
+        if (flowerBlockCount == 0){
 
-        // Initiate x position based on location of hole
-        if (y == 0) {
+            int x = 4;
 
-            x = 2;
+            // Initiate x position based on location of hole
+            if (y == 0) {
+
+                x = 2;
+            }
+            else if (y == 1) {
+
+                x = 0;
+            }
+            else if (y == 2) {
+
+                x = 1;
+            }
+            else if (y == 3) {
+
+                x = 3;
+            }
+            else {
+
+                System.out.println("Incorrect value");
+                return;
+            }
+
+            // Replace icon and revoke tile access
+            this.savedIconFlowerBlock[x][y] = this.cell[y][x].getIcon();
+            this.cell[y][x].setIcon(this.flower);
+            this.tileAccess[x][y] = 0;
+
+            flowerBlockCount++;
         }
-        else if (y == 1) {
-
-            x = 0;
-        }
-        else if (y == 2) {
-
-            x = 1;
-        }
-        else if (y == 3) {
-
-            x = 3;
-        }
-        else {
-
-            System.out.println("Incorrect value");
-            return;
-        }
-
-        // Replace icon and revoke tile access
-        this.savedIconFlowerBlock[x][y] = this.cell[y][x].getIcon();
-        this.cell[y][x].setIcon(this.flower);
-        this.tileAccess[x][y] = 0;
     }
 
     /**
@@ -324,6 +332,8 @@ public class GameBoard implements ActionListener, KeyListener
         // Reset icon and allow tile access
         this.cell[y][x].setIcon(this.savedIconFlowerBlock[x][y]);
         this.tileAccess[x][y] = 0;
+
+        flowerBlockCount--;
     }
 
     /**
@@ -344,7 +354,7 @@ public class GameBoard implements ActionListener, KeyListener
             GUI g = new GUI();
             window.dispose();
         }
-        
+
         // Identify squirrel clicked
         for (int m = 0; m < 4; m++) {
 
@@ -360,6 +370,7 @@ public class GameBoard implements ActionListener, KeyListener
         // Don't allow use of arrow buttons if a squirrel hasn't been selected
         if (Objects.isNull(this.selectedSquirrel)) {
 
+            window.requestFocus();
             return;
         }
         // Navigation Button Event
@@ -379,6 +390,8 @@ public class GameBoard implements ActionListener, KeyListener
 
             this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos()+1, selectedSquirrel.yHeadPos());
         }
+        
+        window.requestFocus();
     }
 
     public void keyTyped(KeyEvent e)
@@ -388,7 +401,81 @@ public class GameBoard implements ActionListener, KeyListener
 
     public void keyPressed(KeyEvent e)
     {
-        keyAction(e);
+        if (e.getKeyCode() == KeyEvent.VK_1) {
+
+            for (int m = 0; m < 4; m++) {
+
+                for (int n = 0; n < 4; n++) {
+    
+                    if (savedSquirrel[m][n].type() == "Red") {
+    
+                        selectedSquirrel = savedSquirrel[m][n];
+                        System.out.println(selectedSquirrel);
+                    }
+                }
+            }
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_2) {
+
+            for (int m = 0; m < 4; m++) {
+
+                for (int n = 0; n < 4; n++) {
+    
+                    if (savedSquirrel[m][n].type() == "Grey") {
+    
+                        selectedSquirrel = savedSquirrel[m][n];
+                    }
+                }
+            }
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_3) {
+
+            for (int m = 0; m < 4; m++) {
+
+                for (int n = 0; n < 4; n++) {
+    
+                    if (savedSquirrel[m][n].type() == "Brown") {
+    
+                        selectedSquirrel = savedSquirrel[m][n];
+                    }
+                }
+            }
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_4) {
+
+            for (int m = 0; m < 4; m++) {
+
+                for (int n = 0; n < 4; n++) {
+    
+                    if (savedSquirrel[m][n].type() == "Black") {
+    
+                        selectedSquirrel = savedSquirrel[m][n];
+                    }
+                }
+            }
+        }
+
+        // Navigation Button Event
+        if (Objects.isNull(this.selectedSquirrel)) {
+
+            return;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_UP) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos(), selectedSquirrel.yHeadPos()-1);
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos(), selectedSquirrel.yHeadPos()+1);
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos()-1, selectedSquirrel.yHeadPos());
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+
+            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos()+1, selectedSquirrel.yHeadPos());
+        }
     }
 
     public void keyReleased(KeyEvent e)
@@ -398,24 +485,7 @@ public class GameBoard implements ActionListener, KeyListener
 
     public void keyAction(KeyEvent e)
     {
-        int code = e.getKeyCode();
-        System.out.println(code);
-
-        if (Objects.isNull(this.selectedSquirrel)) {
-
-            return;
-        }
         
-        if (code == KeyEvent.VK_UP) {
-
-            this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos(), selectedSquirrel.yHeadPos()-1);
-            System.out.println("IT WORKED");
-        }
-
-        if (code == KeyEvent.VK_DOWN) {
-
-            System.out.println("Down");
-        }
     }
 
     /**
@@ -515,11 +585,19 @@ public class GameBoard implements ActionListener, KeyListener
         return this.levelComplete;
     }
 
+    /**
+     * Retrives the moveCount int from GameBoard.
+     * 
+     * @return number of moves to complete level.
+     */
     public int returnMoveCount()
     {
         return this.moveCount;
     }
 
+    /**
+     * Captures the current system time. Used to calculate level completion time.
+     */
     public void startTimer()
     {
         this.startTime = System.currentTimeMillis();
