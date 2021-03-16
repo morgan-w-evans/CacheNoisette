@@ -2,27 +2,39 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class LevelCompleted implements ActionListener
+public class LevelCompleted implements ActionListener, KeyListener
 {
     private JFrame window = new JFrame();
     private JPanel panel = new JPanel();
     private JPanel details = new JPanel();
+
     private Picture title = new Picture("icons/Title.png", 0);
     private Picture blank = new Picture("icons/Blank.png", 0);
     private Picture bottom = new Picture("icons/Bottom.png", 0);
     private Picture nextLevelPicture = new Picture("icons/NextLevel.png", 0);
     private Picture retryImage = new Picture("icons/Retry.png", 0);
+
     private JButton titleButton = new JButton(title);
     private JButton blankButton = new JButton(blank);
     private JButton blankButton2 = new JButton(blank);
     private JButton blankButton3 = new JButton(blank);
     private JButton bottomButton = new JButton(bottom);
-    private JTextArea playerMoves, minimumMoves, time;
     private JButton nextLevel = new JButton(nextLevelPicture);
     private JButton retry = new JButton(retryImage);
+
+    private JTextArea playerMoves, minimumMoves, time;
+    
     private int levelMoves[] = new int[60];
     private int level = 0;
 
+    /**
+     * Creates an instance of LevelCompleted and opens a new window.
+     * 
+     * @param levelInput current level completed.
+     * @param moveCount number of moves by user to complete the level.
+     * @param min time to complete the level. (minutes)
+     * @param sec time to complete the level. (seconds)
+     */
     public LevelCompleted(int levelInput, int moveCount, long min, long sec)
     {
         this.level = levelInput;
@@ -93,36 +105,17 @@ public class LevelCompleted implements ActionListener
         // Initialising Window
         window.setTitle("Level " + level + " Completed");
         window.setSize(600, 625);
-        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
 
         panel.setSize(600,600);
         panel.setLocation(0, 0);
         panel.setLayout(null);
 
-        panel.add(titleButton);
-        titleButton.setSize(600, 203);
-        titleButton.setLocation(0,0);
-        titleButton.setRolloverEnabled(false);
-        titleButton.setBorderPainted(false);
-
-        panel.add(blankButton);
-        blankButton.setSize(100, 203);
-        blankButton.setLocation(0, 244);
-        blankButton.setRolloverEnabled(false);
-        blankButton.setBorderPainted(false);
-
-        panel.add(blankButton2);
-        blankButton2.setSize(100, 203);
-        blankButton2.setLocation(500, 244);
-        blankButton2.setRolloverEnabled(false);
-        blankButton2.setBorderPainted(false);
-
-        panel.add(blankButton3);
-        blankButton3.setSize(600, 44);
-        blankButton3.setLocation(0, 200);
-        blankButton3.setRolloverEnabled(false);
-        blankButton3.setBorderPainted(false);
+        formatButton(titleButton, 600, 203, 0, 0);
+        formatButton(blankButton, 100, 203, 0, 244);
+        formatButton(blankButton2, 100, 203, 500, 244);
+        formatButton(blankButton3, 600, 44, 0, 200);
 
         time = new JTextArea("\n         Level completed in: " + min + " minutes, " + sec + " seconds.");
         details.add(time);
@@ -137,7 +130,7 @@ public class LevelCompleted implements ActionListener
         playerMoves.setEditable(false);
 
         int k = level - 1;
-        minimumMoves = new JTextArea("\n         Minimum moves: " + levelMoves[k] + ".");
+        minimumMoves = new JTextArea("\n         Target: " + levelMoves[k] + ".");
         details.add(minimumMoves);
         minimumMoves.setSize(400, 51);
         minimumMoves.setLocation(0, 102);
@@ -158,16 +151,39 @@ public class LevelCompleted implements ActionListener
         details.setSize(400,203);
         details.setLocation(100, 244);
 
-        panel.add(bottomButton);
-        bottomButton.setSize(600, 188);
-        bottomButton.setLocation(0, 414);
-        bottomButton.setRolloverEnabled(false);
-        bottomButton.setBorderPainted(false);
+        formatButton(bottomButton, 600, 188, 0, 414);
         
         window.setContentPane(panel);
         window.setVisible(true);
+
+        // Add Key Listener
+        window.addKeyListener(this);
+        window.setFocusable(true);
+        window.requestFocus();
     }
 
+    /**
+     * Fucntion adds a button to panel and formats it appropriately.
+     * 
+     * @param button button to add.
+     * @param sizX button width. (pixels)
+     * @param sizY button height. (pixels)
+     * @param posX x-position. (pixels)
+     * @param posY y-position. (pixels)
+     */
+    private void formatButton(JButton button, int sizX, int sizY, int posX, int posY)
+    {
+        panel.add(button);
+        button.setSize(sizX, sizY);
+        button.setLocation(posX, posY);
+        button.setRolloverEnabled(false);
+        button.setBorderPainted(false);
+        button.setSelected(false);
+    }
+
+    /**
+     * Performs task when action event occurs.
+     */
     public void actionPerformed(ActionEvent e)
     {
         if (e.getSource() == nextLevel) {
@@ -181,5 +197,33 @@ public class LevelCompleted implements ActionListener
             LevelStore l = new LevelStore(this.level);
             window.dispose();
         }
+    }
+
+    /**
+     * Performs task when key event occurs.
+     */
+    public void keyPressed(KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_2) {
+
+            this.level++;
+            LevelStore l = new LevelStore(this.level);
+            window.dispose();
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_1) {
+
+            LevelStore l = new LevelStore(this.level);
+            window.dispose();
+        }
+    }
+
+    public void keyReleased(KeyEvent e)
+    {
+
+    }
+
+    public void keyTyped(KeyEvent e)
+    {
+
     }
 }

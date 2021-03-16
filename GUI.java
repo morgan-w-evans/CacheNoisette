@@ -7,7 +7,7 @@ import java.awt.event.*;
  * Allows the user to begin a game, open the level select window or view the help section.
  * When closed, the program exits.
  */
-public class GUI implements ActionListener
+public class GUI implements ActionListener, KeyListener
 {
     private JFrame window = new JFrame();
     private JPanel mainPanel = new JPanel();
@@ -52,6 +52,10 @@ public class GUI implements ActionListener
 
         window.setContentPane(mainPanel);
         window.setVisible(true);
+
+        window.addKeyListener(this);
+        window.setFocusable(true);
+        window.requestFocus();
     }
 
     /**
@@ -77,20 +81,51 @@ public class GUI implements ActionListener
      */
     public void actionPerformed(ActionEvent e)
     {
-        if(e.getSource() == this.startGameButton)
-        {
+        if (e.getSource() == this.startGameButton) {
+
             LevelStore l = new LevelStore(1);
             window.dispose();
         }
-        if(e.getSource() == this.levelsButton)
-        {
+        else if (e.getSource() == this.levelsButton) {
+
             Levels l = new Levels();
             window.dispose();
         }
-        if(e.getSource() == this.howToPlayButton)
-        {
+        else if (e.getSource() == this.howToPlayButton) {
+
             HowToPlay h = new HowToPlay();
+        }
+    }
+
+    /**
+     * Called when a Key Event occurs.
+     */
+    public void keyPressed(KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_1) {
+
+            LevelStore l = new LevelStore(1);
             window.dispose();
         }
+        else if (e.getKeyCode() == KeyEvent.VK_2) {
+
+            Levels l = new Levels();
+            window.dispose();
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_3) {
+
+            HowToPlay h = new HowToPlay();
+            window.requestFocus();
+        }
+    }
+
+    public void keyReleased(KeyEvent e)
+    {
+
+    }
+
+    public void keyTyped(KeyEvent e)
+    {
+
     }
 }

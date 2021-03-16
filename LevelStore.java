@@ -1,7 +1,3 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
 /**
  * This class stores the layout for all 60 game levels.
  * 
@@ -574,6 +570,102 @@ public class LevelStore
             g.add(red);
             g.add(grey);
             g.add(brown);
+        }
+        else if (level == 53) {
+
+            GameBoard g = new GameBoard(53);
+            Squirrel red = new Squirrel("red", 1, 1, 180);
+            Squirrel brown = new Squirrel("brown", 2, 1, 0);
+            Squirrel grey = new Squirrel("grey", 0, 3, 270);
+            Squirrel black = new Squirrel("black", 2, 3, 270);
+            g.add(red);
+            g.add(brown);
+            g.add(grey);
+            g.add(black);
+        }
+        else if (level == 54) {
+
+            GameBoard g = new GameBoard(54);
+            Squirrel grey = new Squirrel("grey", 1, 1, 180);
+            Squirrel red = new Squirrel("red", 3, 1, 90);
+            Squirrel black = new Squirrel("black", 0, 2, 0);
+            Squirrel brown = new Squirrel("brown", 2, 3, 270);
+            g.add(grey);
+            g.add(red);
+            g.add(black);
+            g.add(brown);
+        }
+        else if (level == 55) {
+
+            GameBoard g = new GameBoard(55);
+            Squirrel grey = new Squirrel("grey", 0, 0, 0);
+            Squirrel red = new Squirrel("red", 1, 1, 270);
+            Squirrel brown = new Squirrel("brown", 3, 0, 90);
+            Squirrel black = new Squirrel("black", 1, 3, 180);
+            g.add(grey);
+            g.add(red);
+            g.add(brown);
+            g.add(black);
+        }
+        else if (level == 56) {
+
+            GameBoard g = new GameBoard(56);
+            Squirrel black = new Squirrel("black", 1, 1, 180);
+            Squirrel brown = new Squirrel("brown", 3, 1, 90);
+            Squirrel grey = new Squirrel("grey", 1, 3, 90);
+            Squirrel red = new Squirrel("red", 2, 3, 180);
+            g.add(black);
+            g.add(brown);
+            g.add(grey);
+            g.add(red);
+        }
+        else if (level == 57) {
+
+            GameBoard g = new GameBoard(57);
+            Squirrel red = new Squirrel("red", 1, 0, 270);
+            Squirrel grey = new Squirrel("grey", 0, 2, 180);
+            Squirrel black = new Squirrel("black", 2, 1, 0);
+            Squirrel brown = new Squirrel("brown", 1, 3, 270);
+            g.add(red);
+            g.add(grey);
+            g.add(black);
+            g.add(brown);
+        }
+        else if (level == 58) {
+
+            GameBoard g = new GameBoard(58);
+            Squirrel grey = new Squirrel("grey", 1, 1, 180);
+            Squirrel red = new Squirrel("red", 2, 1, 270);
+            Squirrel black = new Squirrel("black", 1, 3, 180);
+            Squirrel brown = new Squirrel("brown", 3, 2, 90);
+            g.add(grey);
+            g.add(red);
+            g.add(black);
+            g.add(brown);
+        }
+        else if (level == 59) {
+
+            GameBoard g = new GameBoard(59);
+            Squirrel grey = new Squirrel("grey", 1, 0, 90);
+            Squirrel brown = new Squirrel("brown", 1, 1, 90);
+            Squirrel red = new Squirrel("red", 0, 3, 180);
+            Squirrel black = new Squirrel("black", 2, 2, 0);
+            g.add(grey);
+            g.add(brown);
+            g.add(red);
+            g.add(black);
+        }
+        else if (level == 60) {
+
+            GameBoard g = new GameBoard(60);
+            Squirrel grey = new Squirrel("grey", 1, 0, 90);
+            Squirrel brown = new Squirrel("brown", 3, 0, 90);
+            Squirrel red = new Squirrel("red", 2, 2, 180);
+            Squirrel black = new Squirrel("black", 1, 3, 180);
+            g.add(grey);
+            g.add(brown);
+            g.add(red);
+            g.add(black);
         }
     }   
 }

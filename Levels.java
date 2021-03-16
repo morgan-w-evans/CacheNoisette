@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Levels implements ActionListener
+public class Levels implements ActionListener, KeyListener
 {
     private JFrame window = new JFrame();
     private JPanel panel = new JPanel();
@@ -88,6 +88,11 @@ public class Levels implements ActionListener
         
         window.setContentPane(panel);
         window.setVisible(true);
+
+        // Add Key Listener
+        window.addKeyListener(this);
+        window.setFocusable(true);
+        window.requestFocus();
     }
 
     public void actionPerformed(ActionEvent e)
@@ -110,5 +115,26 @@ public class Levels implements ActionListener
             GUI g = new GUI();
             window.dispose();
         }
+
+        window.requestFocus();
+    }
+
+    public void keyPressed(KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_C) {
+
+            GUI g = new GUI();
+            window.dispose();
+        }
+    }
+
+    public void keyReleased(KeyEvent e)
+    {
+
+    }
+
+    public void keyTyped(KeyEvent e)
+    {
+        
     }
 }

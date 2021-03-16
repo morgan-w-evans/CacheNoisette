@@ -1,9 +1,5 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
 /**
- * This class creates the squirrel pieces that are used to navigate the gameboard.
+ * This class creates the properties requried to add a squirrel to GameBoard.
  * 
  * @author Morgan Evans
  */
@@ -42,18 +38,28 @@ public class Squirrel
 
             this.filePath = "Black";
         }
+        else if (colourInput == "empty") {
+            
+        }
         else {
 
             System.out.println("Invalid squirrel colour");
         }
 
         // Initialising Pictures
-        this.rotation = rot;
-        this.squirrelPicture[0] = new Picture("icons/"+filePath+"Squirrel1Nut.png", this.rotation);
-        this.squirrelPicture[1] = new Picture("icons/"+filePath+"Squirrel1.png", this.rotation);
-        this.squirrelPicture[2] = new Picture("icons/"+filePath+"Squirrel2.png", this.rotation);
-        this.squirrelPicture[3] = new Picture("icons/SquirrelFlower.png", 0);
-        this.head = this.squirrelPicture[0];
+        if (colourInput == "empty") {
+
+            return;
+        }    
+        else {
+            
+            this.rotation = rot;
+            this.squirrelPicture[0] = new Picture("icons/"+filePath+"Squirrel1Nut.png", this.rotation);
+            this.squirrelPicture[1] = new Picture("icons/"+filePath+"Squirrel1.png", this.rotation);
+            this.squirrelPicture[2] = new Picture("icons/"+filePath+"Squirrel2.png", this.rotation);
+            this.squirrelPicture[3] = new Picture("icons/SquirrelFlower.png", 0);
+            this.head = this.squirrelPicture[0];
+        }
 
         // Save coordinates of squirrel
         this.xHeadPos = x;

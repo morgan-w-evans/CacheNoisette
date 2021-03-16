@@ -5,8 +5,9 @@ import java.util.Objects;
 
 /**
  * This class creates the gameboard, consisiting of blank tiles, with holes inserted in preset locations.
- * 
  * Directional buttons are inserted surrounding the gameboard, to allow the squirrels to be controlled.
+ * GameBoard includes ActionListener and KeyListener to allow the user to interact with the board and navigate 
+ * the squirrels around it.
  * 
  * @author Morgan Evans
  */
@@ -22,13 +23,18 @@ public class GameBoard implements ActionListener, KeyListener
     private GridLayout innerLayout = new GridLayout(4, 4);
     private JButton cell[][] = new JButton[4][4];
     
-    // Inserting arrow images and creating buttons to display them.
+    // Inserting board images and the buttons to hold them.
     private Picture upArrow = new Picture("icons/BigArrow.png", 0);
     private Picture downArrow = new Picture("icons/BigArrow.png", 180);
     private Picture leftArrow = new Picture("icons/Arrow.png", 270);
     private Picture rightArrow = new Picture("icons/Arrow.png", 90);
     private Picture resetImage = new Picture("icons/Reset.png", 0);
     private Picture closeImage = new Picture("icons/Close.png", 0);
+    private Picture redSelectedImage = new Picture("icons/GameBoardRed.png", 0);
+    private Picture greySelectedImage = new Picture("icons/GameBoardGrey.png", 0);
+    private Picture brownSelectedImage = new Picture("icons/GameBoardBrown.png", 0);
+    private Picture blackSelectedImage = new Picture("icons/GameBoardBlack.png", 0);
+    private Picture colourSelectImage = new Picture("icons/ColourSelectImage.png", 0);
 
     private JButton upButton = new JButton(upArrow);
     private JButton downButton = new JButton(downArrow);
@@ -36,6 +42,7 @@ public class GameBoard implements ActionListener, KeyListener
     private JButton rightButton = new JButton(rightArrow);
     private JButton reset = new JButton(resetImage);
     private JButton close = new JButton(closeImage);
+    private JButton colourSelect = new JButton(colourSelectImage);
 
     // Instances of the tiles are created in arrarys to construct the gameboard.
     private BlankTile blankTile[] = new BlankTile[16];
@@ -67,6 +74,8 @@ public class GameBoard implements ActionListener, KeyListener
 
     /**
      * Creates an instance of GameBoard.
+     * 
+     * @param level level to display in window title.
      */
     public GameBoard(int level)
     {
@@ -74,28 +83,30 @@ public class GameBoard implements ActionListener, KeyListener
         this.boardLevel = level;
         
         window.setTitle("Level "+ this.boardLevel);
-        window.setSize(600, 725);
-        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        window.setSize(600, 775);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
 
-        // Setting the layout and adding elemets to the gameboard.
+        // Setting the grid layout.
         innerPanel.setLayout(innerLayout);
 
-        for(int i = 0; i < 16; i++)
-        {
+        // Creating instances of BlankTile for all 16 cells.
+        for (int i = 0; i < 16; i++) {
+
             blankTile[i] = new BlankTile();
         }
 
+        // Copy BlankTile buttons into 2D array cell positions.
         boolean run = true;
 
-        while(run)
-        {
+        while (run) {
+
             int i = 0;
 
-            for(int m = 0; m < 4; m++)
-            {
-                for(int n = 0; n < 4; n++)
-                {
+            for (int m = 0; m < 4; m++) {
+
+                for (int n = 0; n < 4; n++) {
+
                     cell[m][n] = new JButton();
                     cell[m][n] = blankTile[i].button();
                     i++;
@@ -105,8 +116,9 @@ public class GameBoard implements ActionListener, KeyListener
             run = false;
         }
 
-        for (int i = 0; i < 4; i++)
-        {
+        // Create instances of HoleTile and copy the buttons in the correct locations.
+        for (int i = 0; i < 4; i++) {
+
             holeTile[i] = new HoleTile();
         }
 
@@ -115,24 +127,28 @@ public class GameBoard implements ActionListener, KeyListener
         cell[2][1] = holeTile[2].button();
         cell[3][3] = holeTile[3].button();
         
-        for(int m = 0; m < 4; m++)
-        {
-            for(int n = 0; n < 4; n++)
-            {
+        // Add all buttons to the panel.
+        for (int m = 0; m < 4; m++) {
+
+            for (int n = 0; n < 4; n++) {
+
                 innerPanel.add(cell[m][n]);
             }
         } 
         
-        // Creating the outer layout, containing the navigation buttons.
+        // Setting the outer layout
         outerPanel.setLayout(null);
 
-        arrowButton(upButton, 0, 0, 600, 100);
-        arrowButton(downButton, 0, 500, 600, 100);
-        arrowButton(rightButton, 500, 100, 100, 400);
-        arrowButton(leftButton, 0, 100, 100, 400);
-        arrowButton(reset, 0, 600, 300, 100);
-        arrowButton(close, 300, 600, 300, 100);
+        // Add and format all buttons.
+        formatButton(upButton, 0, 0, 600, 100);
+        formatButton(downButton, 0, 500, 600, 100);
+        formatButton(rightButton, 500, 100, 100, 400);
+        formatButton(leftButton, 0, 100, 100, 400);
+        formatButton(reset, 0, 600, 300, 100);
+        formatButton(close, 300, 600, 300, 100);
+        formatButton(colourSelect, 0, 700, 600, 50);
 
+        // Add the innerPanel to outerPanel and make window visible.
         outerPanel.add(innerPanel);
         innerPanel.setLocation(100,100);
         innerPanel.setSize(400,400);
@@ -140,24 +156,23 @@ public class GameBoard implements ActionListener, KeyListener
         window.setContentPane(outerPanel);
         window.setVisible(true);
 
-        // Initialising squirrel store array
-        // Initialising tile access array
+        // Initialising squirrel store and tile access arrays.
         for (int m = 0; m < 4; m++) {
 
             for (int n = 0; n < 4; n++) {
 
-                this.savedSquirrel[n][m] = new Squirrel("red", 0, 0, 0);
+                this.savedSquirrel[n][m] = new Squirrel("empty", 0, 0, 0);
                 this.tileAccess[n][m] = 1;
             }
         }
 
-        // Initialsing holes as empty
+        // Setting holes to empty
         this.holeEmpty[2][0] = 1;
         this.holeEmpty[0][1] = 1;
         this.holeEmpty[1][2] = 1;
         this.holeEmpty[3][3] = 1;
 
-        // Implement key listener
+        // Implement KeyListener
         window.addKeyListener(this);
         window.setFocusable(true);
         window.requestFocus();
@@ -167,7 +182,7 @@ public class GameBoard implements ActionListener, KeyListener
     }
 
     /**
-     * Adds arrow buttons to JPanel and provides formatting.
+     * Adds buttons to JPanel and provides formatting.
      * 
      * @param button button to add to JPanel.
      * @param posX x position of button in JPanel (pixels).
@@ -175,7 +190,7 @@ public class GameBoard implements ActionListener, KeyListener
      * @param sizX width of button (pixels).
      * @param sizY height of button (pixels).
      */
-    private void arrowButton(JButton button, int posX, int posY, int sizX, int sizY)
+    private void formatButton(JButton button, int posX, int posY, int sizX, int sizY)
     {
         outerPanel.add(button);
         button.setLocation(posX,posY);
@@ -199,6 +214,7 @@ public class GameBoard implements ActionListener, KeyListener
         // Adding squirrel by replacing icons. Stores icons and squirrels in arrays for retrieval
         savedIconHead[squirrel.yHeadPos()][squirrel.xHeadPos()] = this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].getIcon();
         this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].setIcon(squirrel.add("head"));
+        this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].setEnabled(true);
         this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].addActionListener(this);
 
         savedIconTail[squirrel.yTailPos()][squirrel.xTailPos()] = this.cell[squirrel.yTailPos()][squirrel.xTailPos()].getIcon();
@@ -238,6 +254,7 @@ public class GameBoard implements ActionListener, KeyListener
         // Removing squirrel by replacing icons
         this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].setIcon(savedIconHead[squirrel.yHeadPos()][squirrel.xHeadPos()]);
         this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].removeActionListener(this);
+        this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].setEnabled(false);
 
         this.cell[squirrel.yTailPos()][squirrel.xTailPos()].setIcon(savedIconTail[squirrel.yTailPos()][squirrel.xTailPos()]);
         
@@ -248,7 +265,7 @@ public class GameBoard implements ActionListener, KeyListener
             this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].setIcon(savedIconFlowers[squirrel.yFlowersPos()][squirrel.xFlowersPos()]);
         }
 
-        savedSquirrel[squirrel.xHeadPos()][squirrel.yHeadPos()] = null;
+        savedSquirrel[squirrel.xHeadPos()][squirrel.yHeadPos()] = new Squirrel(null, 0, 0, 0);
 
         // Squirrel counter
         this.squirrelCount--;
@@ -261,7 +278,7 @@ public class GameBoard implements ActionListener, KeyListener
      */
     public void addFlowerBlock(int y)
     {
-        if (flowerBlockCount == 0){
+        if (flowerBlockCount == 0) {
 
             int x = 4;
 
@@ -361,8 +378,25 @@ public class GameBoard implements ActionListener, KeyListener
             for (int n = 0; n < 4; n++) {
 
                 if (e.getSource() == cell[n][m]) {
-
+                    
                     selectedSquirrel = savedSquirrel[m][n];
+
+                    if (selectedSquirrel.type() == "Red") {
+
+                        colourSelect.setIcon(redSelectedImage);
+                    }
+                    else if (selectedSquirrel.type() == "Grey") {
+
+                        colourSelect.setIcon(greySelectedImage);
+                    }
+                    else if (selectedSquirrel.type() == "Brown") {
+
+                        colourSelect.setIcon(brownSelectedImage);
+                    }
+                    else if (selectedSquirrel.type() == "Black") {
+
+                        colourSelect.setIcon(blackSelectedImage);
+                    }
                 }
             }
         }
@@ -390,17 +424,29 @@ public class GameBoard implements ActionListener, KeyListener
 
             this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos()+1, selectedSquirrel.yHeadPos());
         }
-        
+    
         window.requestFocus();
-    }
-
-    public void keyTyped(KeyEvent e)
-    {
         
     }
 
+    /**
+     * Completes the relevant actions in the event of a key press.
+     */
     public void keyPressed(KeyEvent e)
     {
+        // Operation buttons
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+
+            LevelStore l = new LevelStore(this.boardLevel);
+            window.dispose();
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_C) {
+
+            GUI g = new GUI();
+            window.dispose();
+        }
+        
+        // Squirrel selection
         if (e.getKeyCode() == KeyEvent.VK_1) {
 
             for (int m = 0; m < 4; m++) {
@@ -410,7 +456,7 @@ public class GameBoard implements ActionListener, KeyListener
                     if (savedSquirrel[m][n].type() == "Red") {
     
                         selectedSquirrel = savedSquirrel[m][n];
-                        System.out.println(selectedSquirrel);
+                        colourSelect.setIcon(redSelectedImage);
                     }
                 }
             }
@@ -424,6 +470,7 @@ public class GameBoard implements ActionListener, KeyListener
                     if (savedSquirrel[m][n].type() == "Grey") {
     
                         selectedSquirrel = savedSquirrel[m][n];
+                        colourSelect.setIcon(greySelectedImage);
                     }
                 }
             }
@@ -437,6 +484,7 @@ public class GameBoard implements ActionListener, KeyListener
                     if (savedSquirrel[m][n].type() == "Brown") {
     
                         selectedSquirrel = savedSquirrel[m][n];
+                        colourSelect.setIcon(brownSelectedImage);
                     }
                 }
             }
@@ -450,6 +498,7 @@ public class GameBoard implements ActionListener, KeyListener
                     if (savedSquirrel[m][n].type() == "Black") {
     
                         selectedSquirrel = savedSquirrel[m][n];
+                        colourSelect.setIcon(blackSelectedImage);
                     }
                 }
             }
@@ -458,6 +507,7 @@ public class GameBoard implements ActionListener, KeyListener
         // Navigation Button Event
         if (Objects.isNull(this.selectedSquirrel)) {
 
+            window.requestFocus();
             return;
         }
         else if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -476,6 +526,8 @@ public class GameBoard implements ActionListener, KeyListener
 
             this.move(this.selectedSquirrel, selectedSquirrel.xHeadPos()+1, selectedSquirrel.yHeadPos());
         }
+
+        window.requestFocus();
     }
 
     public void keyReleased(KeyEvent e)
@@ -483,7 +535,7 @@ public class GameBoard implements ActionListener, KeyListener
         
     }
 
-    public void keyAction(KeyEvent e)
+    public void keyTyped(KeyEvent e)
     {
         
     }
@@ -550,7 +602,6 @@ public class GameBoard implements ActionListener, KeyListener
                 long secondsTaken = this.timeTaken / 1000;
                 long secondsDisplay = secondsTaken % 60;
                 long minutesDisplay = secondsTaken / 60;
-                GUI g = new GUI();
                 LevelCompleted n = new LevelCompleted(this.boardLevel, this.moveCount, minutesDisplay, secondsDisplay);
                 window.dispose();
             }

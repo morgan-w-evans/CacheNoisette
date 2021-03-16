@@ -9,18 +9,18 @@ import java.awt.event.*;
  */
 public class BlankTile
 {
-    private Picture pic;
-    private JButton button;
+    private Picture pic = new Picture("icons/Empty.png", 0);
+    private JButton button = new JButton(pic);
 
     /**
      * Creates an instance of BlankTile by creating a JButton and inserting the tile icon.
      */
     public BlankTile()
     {
-        this.pic = new Picture("icons/Empty.png", 0);
-        this.button = new JButton(this.pic);
         this.button.setRolloverEnabled(false);
         this.button.setBorderPainted(false);
+        this.button.setEnabled(false);
+        this.button.setDisabledIcon(this.pic);
     }
 
     /**
@@ -31,5 +31,10 @@ public class BlankTile
     public JButton button()
     {
         return this.button;
+    }
+
+    public Icon icon()
+    {
+        return this.button.getIcon();
     }
 }
