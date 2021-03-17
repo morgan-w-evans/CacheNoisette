@@ -140,17 +140,17 @@ public class GameBoard implements ActionListener, KeyListener
         outerPanel.setLayout(null);
 
         // Add and format all buttons.
-        formatButton(upButton, 0, 0, 600, 100);
-        formatButton(downButton, 0, 500, 600, 100);
-        formatButton(rightButton, 500, 100, 100, 400);
-        formatButton(leftButton, 0, 100, 100, 400);
-        formatButton(reset, 0, 600, 300, 100);
-        formatButton(close, 300, 600, 300, 100);
-        formatButton(colourSelect, 0, 700, 600, 50);
+        formatButton(upButton, 0, 50, 600, 100);
+        formatButton(downButton, 0, 550, 600, 100);
+        formatButton(rightButton, 500, 150, 100, 400);
+        formatButton(leftButton, 0, 150, 100, 400);
+        formatButton(reset, 0, 650, 300, 100);
+        formatButton(close, 300, 650, 300, 100);
+        formatButton(colourSelect, 0, 0, 600, 50);
 
         // Add the innerPanel to outerPanel and make window visible.
         outerPanel.add(innerPanel);
-        innerPanel.setLocation(100,100);
+        innerPanel.setLocation(100,150);
         innerPanel.setSize(400,400);
 
         window.setContentPane(outerPanel);
