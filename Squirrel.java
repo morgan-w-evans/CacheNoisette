@@ -38,8 +38,9 @@ public class Squirrel
 
             this.filePath = "Black";
         }
-        else if (colourInput == "empty") {
+        else if (colourInput == "empty" | colourInput == null) {
             
+            this.filePath = "Blank";
         }
         else {
 
@@ -47,11 +48,11 @@ public class Squirrel
         }
 
         // Initialising Pictures
-        if (colourInput == "empty") {
+        if (colourInput == "empty" | colourInput == null) {
 
             return;
         }    
-        else {
+        else if (colourInput != "empty") {
             
             this.rotation = rot;
             this.squirrelPicture[0] = new Picture("icons/"+filePath+"Squirrel1Nut.png", this.rotation);
@@ -80,7 +81,7 @@ public class Squirrel
         this.xFlowersPos = this.xHeadPos;
         this.yFlowersPos = this.yHeadPos;
 
-        // Alter coordinates based on rotation
+        // Alter coordinates of the squirrel's tail and flower piece, based on its rotation
         if (this.rotation == 0) {
 
             this.yTailPos = this.yHeadPos + 1;

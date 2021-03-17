@@ -1,7 +1,5 @@
-import java.util.*;
-
 /**
- * Cache Noisette has been designed as part of the SCC.110 Java Coursework for 2020-21.
+ * Cache Noisettes has been designed as part of the SCC.110 Java Coursework for 2020-21.
  * 
  * This class contains the main method required to run the program.
  * The program consists of GUIs that create a fully functional board game,
@@ -10,7 +8,7 @@ import java.util.*;
  * 
  * @author Morgan Evans
  */
-public class CacheNoisette
+public class CacheNoisettes
 {
     public static void main (String[] args)
     {

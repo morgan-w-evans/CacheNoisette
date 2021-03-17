@@ -1,9 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
- * This class creates a tile containing a hole.
+ * This class creates an instance of a tile containing a hole.
  * 
  * @author Morgan Evans
  */
@@ -13,10 +12,11 @@ public class HoleTile
     private JButton button = new JButton(this.pic);
 
     /**
-     * Creates an instance of HoleTile by creating a JButton and inserting the hole icon.
+     * Creates an instance of HoleTile and formats the button.
      */
     public HoleTile()
     {
+        // Remove the border from the object and disable it, until it is enabled when a squirrel moves over it
         this.button.setRolloverEnabled(false);
         this.button.setBorderPainted(false);
         this.button.setEnabled(false);

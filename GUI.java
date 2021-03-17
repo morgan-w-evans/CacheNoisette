@@ -32,11 +32,13 @@ public class GUI implements ActionListener, KeyListener
      */
     public GUI()
     {
+        // Initialise the window
         window.setTitle("Cache Noisettes!");
         window.setSize(600, 625);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
         
+        // Set the layout and formatting of components
         mainPanel.setLayout(null);
         mainPanel.setSize(600, 600);
         mainPanel.setLocation(0, 0);
@@ -46,6 +48,12 @@ public class GUI implements ActionListener, KeyListener
         this.format(howToPlayButton, 400, 244, 200, 203);
         this.format(bottomButton, 0, 414, 600, 188);
 
+        titleButton.setEnabled(false);
+        titleButton.setDisabledIcon(titlePicture);
+        bottomButton.setEnabled(false);
+        bottomButton.setDisabledIcon(bottomPicture);
+
+        // Add action listeners to the buttons
         this.startGameButton.addActionListener(this);
         this.levelsButton.addActionListener(this);
         this.howToPlayButton.addActionListener(this);
@@ -53,6 +61,7 @@ public class GUI implements ActionListener, KeyListener
         window.setContentPane(mainPanel);
         window.setVisible(true);
 
+        // Add a key listener to the window
         window.addKeyListener(this);
         window.setFocusable(true);
         window.requestFocus();
@@ -83,16 +92,19 @@ public class GUI implements ActionListener, KeyListener
     {
         if (e.getSource() == this.startGameButton) {
 
+            // Start a new game from level 1
             LevelStore l = new LevelStore(1);
             window.dispose();
         }
         else if (e.getSource() == this.levelsButton) {
 
+            // Open a new instance of levels
             Levels l = new Levels();
             window.dispose();
         }
         else if (e.getSource() == this.howToPlayButton) {
 
+            // Open the How To Play window
             HowToPlay h = new HowToPlay();
         }
     }
@@ -104,16 +116,19 @@ public class GUI implements ActionListener, KeyListener
     {
         if (e.getKeyCode() == KeyEvent.VK_1) {
 
+            // Start a new game from level 1
             LevelStore l = new LevelStore(1);
             window.dispose();
         }
         else if (e.getKeyCode() == KeyEvent.VK_2) {
 
+            // Open a new istance of levels
             Levels l = new Levels();
             window.dispose();
         }
         else if (e.getKeyCode() == KeyEvent.VK_3) {
 
+            // Open the How To Play window
             HowToPlay h = new HowToPlay();
             window.requestFocus();
         }

@@ -2,6 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * This class creates a window which displays the statistics when a user completes a level.
+ * Options are then available to the user to either retry or move on to the next level.
+ * 
+ * @author Morgan Evans
+ */
 public class LevelCompleted implements ActionListener, KeyListener
 {
     private JFrame window = new JFrame();
@@ -100,61 +106,43 @@ public class LevelCompleted implements ActionListener, KeyListener
         this.levelMoves[57] = 46;
         this.levelMoves[58] = 50;
         this.levelMoves[59] = 58;
-        
 
         // Initialising Window
         window.setTitle("Level " + level + " Completed");
         window.setSize(600, 625);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
-
-        panel.setSize(600,600);
-        panel.setLocation(0, 0);
-        panel.setLayout(null);
-
-        formatButton(titleButton, 600, 203, 0, 0);
-        formatButton(blankButton, 100, 203, 0, 244);
-        formatButton(blankButton2, 100, 203, 500, 244);
-        formatButton(blankButton3, 600, 44, 0, 200);
-
-        time = new JTextArea("\n         Level completed in: " + min + " minutes, " + sec + " seconds.");
-        details.add(time);
-        time.setSize(400, 51);
-        time.setLocation(0, 0);
-        time.setEditable(false);
-        
-        playerMoves = new JTextArea("\n         Level completed in " + moveCount + " moves.");
-        details.add(playerMoves);
-        playerMoves.setSize(400, 51);
-        playerMoves.setLocation(0, 51);
-        playerMoves.setEditable(false);
-
-        int k = level - 1;
-        minimumMoves = new JTextArea("\n         Target: " + levelMoves[k] + ".");
-        details.add(minimumMoves);
-        minimumMoves.setSize(400, 51);
-        minimumMoves.setLocation(0, 102);
-        minimumMoves.setEditable(false);
-
-        details.add(retry);
-        retry.setSize(150, 50);
-        retry.setLocation(0, 153);
-        retry.addActionListener(this);
-
-        details.add(nextLevel);
-        nextLevel.setSize(250, 50);
-        nextLevel.setLocation(150, 153);
-        nextLevel.addActionListener(this);
-
         panel.add(details);
-        details.setLayout(null);
-        details.setSize(400,203);
-        details.setLocation(100, 244);
 
-        formatButton(bottomButton, 600, 188, 0, 414);
-        
+        // Initialise text areas
+        int k = level - 1;
+        time = new JTextArea("\n         Level completed in: " + min + " minutes, " + sec + " seconds.");
+        playerMoves = new JTextArea("\n         Level completed in " + moveCount + " moves.");
+        minimumMoves = new JTextArea("\n         Target: " + levelMoves[k] + ".");
+
+        // Format all components
+        formatComponent(panel, null, null, 600, 600, 0, 0, null);
+        formatComponent(details, null, null, 400, 203, 100, 244, null);
+
+        formatComponent(null, titleButton, null, 600, 203, 0, 0, panel);
+        formatComponent(null, blankButton, null, 100, 203, 0, 244, panel);
+        formatComponent(null, blankButton2, null, 100, 203, 500, 244, panel);
+        formatComponent(null, blankButton3, null, 600, 44, 0, 200, panel);
+        formatComponent(null, bottomButton, null, 600, 188, 0, 414, panel);
+
+        formatComponent(null, null, time, 400, 51, 0, 0, details);
+        formatComponent(null, null, playerMoves, 400, 51, 0, 51, details);
+        formatComponent(null, null, minimumMoves, 400, 51, 0, 102, details);
+        formatComponent(null, retry, null, 150, 50, 0, 153, details);
+        formatComponent(null, nextLevel, null, 250, 50, 150, 153, details);
+
+        // Show window
         window.setContentPane(panel);
         window.setVisible(true);
+
+        // Add Action Listeners
+        retry.addActionListener(this);
+        nextLevel.addActionListener(this);
 
         // Add Key Listener
         window.addKeyListener(this);
@@ -163,22 +151,46 @@ public class LevelCompleted implements ActionListener, KeyListener
     }
 
     /**
-     * Fucntion adds a button to panel and formats it appropriately.
+     * Function adds a component to panel and formats it appropriately.
      * 
-     * @param button button to add.
+     * @param jpanel JPanel to add.
+     * @param button JButton to add.
+     * @param textArea JTextArea to add.
      * @param sizX button width. (pixels)
      * @param sizY button height. (pixels)
      * @param posX x-position. (pixels)
      * @param posY y-position. (pixels)
+     * @param addPanel panel to add component to.
      */
-    private void formatButton(JButton button, int sizX, int sizY, int posX, int posY)
+    private void formatComponent(JPanel jpanel, JButton button, JTextArea textArea, int sizX, int sizY, int posX, int posY, JPanel addPanel)
     {
-        panel.add(button);
-        button.setSize(sizX, sizY);
-        button.setLocation(posX, posY);
-        button.setRolloverEnabled(false);
-        button.setBorderPainted(false);
-        button.setSelected(false);
+        if (jpanel == null & textArea == null) {
+
+            addPanel.add(button);
+            button.setSize(sizX, sizY);
+            button.setLocation(posX, posY);
+            button.setRolloverEnabled(false);
+            button.setBorderPainted(false);
+
+            if (addPanel == panel) {
+
+                button.setEnabled(false);
+                button.setDisabledIcon(button.getIcon());
+            }
+        }
+        else if (jpanel == null & button == null) {
+
+            addPanel.add(textArea);
+            textArea.setSize(sizX, sizY);
+            textArea.setLocation(posX, posY);
+            textArea.setEditable(false);
+        }
+        else if (button == null & textArea == null) {
+
+            jpanel.setSize(sizX, sizY);
+            jpanel.setLocation(posX, posY);
+            jpanel.setLayout(null);
+        }
     }
 
     /**

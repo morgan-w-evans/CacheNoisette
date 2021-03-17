@@ -219,6 +219,7 @@ public class GameBoard implements ActionListener, KeyListener
 
         savedIconTail[squirrel.yTailPos()][squirrel.xTailPos()] = this.cell[squirrel.yTailPos()][squirrel.xTailPos()].getIcon();
         this.cell[squirrel.yTailPos()][squirrel.xTailPos()].setIcon(squirrel.add("tail"));
+        this.cell[squirrel.yTailPos()][squirrel.xTailPos()].setEnabled(true);
         
         // Adding flower piece
         if (squirrel.type() == "Brown" | squirrel.type() == "Black") {
@@ -226,6 +227,7 @@ public class GameBoard implements ActionListener, KeyListener
             this.tileAccess[squirrel.xFlowersPos()][squirrel.yFlowersPos()] = 0;
             savedIconFlowers[squirrel.yFlowersPos()][squirrel.xFlowersPos()] = this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].getIcon();
             this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].setIcon(squirrel.add("flowers"));
+            this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].setEnabled(true);
         }
 
         savedSquirrel[squirrel.xHeadPos()][squirrel.yHeadPos()] = squirrel;
@@ -257,12 +259,14 @@ public class GameBoard implements ActionListener, KeyListener
         this.cell[squirrel.yHeadPos()][squirrel.xHeadPos()].setEnabled(false);
 
         this.cell[squirrel.yTailPos()][squirrel.xTailPos()].setIcon(savedIconTail[squirrel.yTailPos()][squirrel.xTailPos()]);
+        this.cell[squirrel.yTailPos()][squirrel.xTailPos()].setEnabled(false);
         
         // Removing flower piece
         if (squirrel.type() == "Brown" | squirrel.type() == "Black") {
 
             this.tileAccess[squirrel.xFlowersPos()][squirrel.yFlowersPos()] = 1;
             this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].setIcon(savedIconFlowers[squirrel.yFlowersPos()][squirrel.xFlowersPos()]);
+            this.cell[squirrel.yFlowersPos()][squirrel.xFlowersPos()].setEnabled(false);
         }
 
         savedSquirrel[squirrel.xHeadPos()][squirrel.yHeadPos()] = new Squirrel(null, 0, 0, 0);
@@ -308,49 +312,11 @@ public class GameBoard implements ActionListener, KeyListener
             // Replace icon and revoke tile access
             this.savedIconFlowerBlock[x][y] = this.cell[y][x].getIcon();
             this.cell[y][x].setIcon(this.flower);
+            this.cell[y][x].setDisabledIcon(this.flower);
             this.tileAccess[x][y] = 0;
 
             flowerBlockCount++;
         }
-    }
-
-    /**
-     * Removes a flower block from the gameboard, to allow holes to be used.
-     * 
-     * @param y y-coordinate of hole. (0-3)
-     */
-    public void removeFlowerBlock(int y)
-    {
-        int x = 4;
-
-        // Initiate x position based on location of hole
-        if (y == 0) {
-
-            x = 2;
-        }
-        else if (y == 1) {
-
-            x = 0;
-        }
-        else if (y == 2) {
-
-            x = 1;
-        }
-        else if (y == 3) {
-
-            x = 3;
-        }
-        else {
-            
-            System.out.println("Incorrect value");
-            return;
-        }
-        
-        // Reset icon and allow tile access
-        this.cell[y][x].setIcon(this.savedIconFlowerBlock[x][y]);
-        this.tileAccess[x][y] = 0;
-
-        flowerBlockCount--;
     }
 
     /**
@@ -573,7 +539,7 @@ public class GameBoard implements ActionListener, KeyListener
         squirrel.xHeadPos(xNew);
         squirrel.yHeadPos(yNew);
 
-        // Check to ensure new location is empty, if not add original squirrel back and finish.
+        // Check to ensure new location is empty, if not add original squirrel back and finish
         if (this.tileAccess[squirrel.xHeadPos()][squirrel.yHeadPos()] == 0 | this.tileAccess[squirrel.xTailPos()][squirrel.yTailPos()] == 0 | this.tileAccess[squirrel.xFlowersPos()][squirrel.yFlowersPos()] == 0) {
             
             squirrel.xHeadPos(restoreXHeadPos);
@@ -588,6 +554,7 @@ public class GameBoard implements ActionListener, KeyListener
                 squirrel.nutDrop();
                 this.holeEmpty[xNew][yNew] = 0;
                 this.cell[yNew][xNew].setIcon(holeNut);
+                this.cell[yNew][xNew].setDisabledIcon(holeNut);
                 this.nutDropCount++;
             }
 

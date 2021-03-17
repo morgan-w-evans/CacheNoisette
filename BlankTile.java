@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  * This class creates a blank tile.
@@ -13,10 +12,11 @@ public class BlankTile
     private JButton button = new JButton(pic);
 
     /**
-     * Creates an instance of BlankTile by creating a JButton and inserting the tile icon.
+     * Creates an instance of BlankTile and formats the button.
      */
     public BlankTile()
     {
+        // Removes the border and disables the button until a squirrel lands on it.
         this.button.setRolloverEnabled(false);
         this.button.setBorderPainted(false);
         this.button.setEnabled(false);
@@ -33,6 +33,11 @@ public class BlankTile
         return this.button;
     }
 
+    /**
+     * Returns the icon of the button when called.
+     * 
+     * @return blankTile icon.
+     */
     public Icon icon()
     {
         return this.button.getIcon();
