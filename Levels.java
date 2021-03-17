@@ -101,6 +101,8 @@ public class Levels implements ActionListener, KeyListener
             panel.add(button);
             button.setSize(sizX, sizY);
             button.setLocation(posX, posY);
+            button.setBorderPainted(false);
+            button.setRolloverEnabled(false);
 
             if (disabled) {
 
